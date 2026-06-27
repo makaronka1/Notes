@@ -1,0 +1,160 @@
+* {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 2560px;
+  margin: 0px auto;
+  height: 100vh;
+}
+
+.side-bar {
+  width: 300px;
+  height: 100%;
+  max-height: 1440px;
+  background-color: #e7e7e76e;
+}
+
+.main-place {
+  flex: 1;
+  height: 100%;
+  max-height: 1440px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+}
+
+.tree-root {
+  list-style: none;
+  padding-left: 0;
+}
+
+.tree-node {
+  list-style: none;
+  padding-left: 10px;
+  border-left: 1px solid #c7c7c7;
+}
+
+.root-tree-node {
+  margin-top: 15px;
+  margin-left: 15px;
+  border: 0px;
+}
+
+.tree-children {
+  list-style: none;
+  padding-left: 10px;
+  margin: 0;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.01s ease-out, opacity 0.1s ease-out, padding 0.2s ease-out;
+}
+
+.tree-children.open {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+/* Стили для просмотрщика файлов */
+.file-viewer {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  width: 35%;
+  min-width: 790px;
+}
+
+.back-btn, .save-btn, .external-btn {
+  padding: 8px 16px;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.back-btn:hover, .save-btn:hover, .external-btn:hover {
+  background: #2980b9;
+}
+
+.save-btn {
+  background: #27ae60;
+}
+
+.save-btn:hover {
+  background: #219a52;
+}
+
+.external-btn {
+  background: #e67e22;
+}
+
+.external-btn:hover {
+  background: #d35400;
+}
+
+.file-content-text {
+  margin-top: 10px;
+  background: #2d2d2d;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.file-content-image {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.file-content-info {
+  padding: 20px;
+  background: #f0f0f0;
+  border-radius: 5px;
+  font-family: monospace;
+}
+
+.file-item {
+  color : #343434;
+}
+
+.directory-item {
+  color : #343434;
+}
+
+.error-message {
+  margin-top: 20px;
+}
+
+.file-title-input {
+  border: 0;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 5px 0;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 400px;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+
+.file-title-input:focus {
+  outline: none;
+}
