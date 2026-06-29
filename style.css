@@ -10,23 +10,25 @@
   width: 100%;
   max-width: 2560px;
   margin: 0px auto;
-  height: 100vh;
+  position: relative;
+  min-height: 100vh;
 }
 
 .side-bar {
   width: 300px;
-  height: 100%;
   max-height: 1440px;
+  height: 100vh;
   background-color: #e7e7e76e;
+  position: fixed;
 }
 
 .main-place {
   flex: 1;
   height: 100%;
-  max-height: 1440px;
   background-color: white;
   display: flex;
   justify-content: center;
+  margin-left: 300px;
 }
 
 .tree-root {
@@ -69,6 +71,7 @@
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   width: 35%;
   min-width: 790px;
+  min-height: 95vh;
 }
 
 .back-btn, .save-btn, .external-btn {
@@ -111,7 +114,6 @@
   font-size: 16px;
   overflow-x: auto;
   white-space: pre-wrap;
-  max-height: 70vh;
   overflow-y: auto;
 }
 
@@ -157,4 +159,44 @@
 
 .file-title-input:focus {
   outline: none;
+}
+
+.notify-container {
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 420px;
+  width: 100%;
+  left: 80%;
+  top: 80%;
+  margin-right: 35px;
+  max-height: 240px;
+}
+
+.notify-item {
+  width: 410px;
+  height: auto;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  background-color: #d3d3d3f2;
+  font-size: 14px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+}
+
+.error {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: rgba(192, 57, 43, 1.0);
+}
+
+.accept {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: rgba(39, 174, 96, 1.0);
+}
+
+.warning {
+  background-color: rgba(241, 196, 15, 0.15);
+  color: rgba(211, 84, 0, 1.0);
 }
