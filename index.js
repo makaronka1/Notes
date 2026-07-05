@@ -436,7 +436,7 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
     const renameResult = await window.fileSystem.renameFile(state.currentFilePath, newFilePath);
     
     if (renameResult.success) {
-      console.log(`✅ Файл переименован: ${state.currentFullFileName} -> ${newFullName}`);
+      createNotify(`✅ Файл переименован: ${state.currentFullFileName} -> ${newFullName}`, 'success', 10000);
       
       // Обновляем состояние
       state.currentFilePath = newFilePath;

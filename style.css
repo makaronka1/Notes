@@ -165,7 +165,7 @@
   position: sticky;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   justify-content: flex-end;
   max-width: 420px;
   width: 100%;
@@ -176,27 +176,31 @@
 }
 
 .notify-item {
-  width: 410px;
+  max-width: 410px;
   height: auto;
   padding: 10px 16px;
   margin-bottom: 20px;
   background-color: #d3d3d3f2;
   font-size: 14px;
-  border-radius: 6px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  border-radius: 8px;
 }
 
-.error {
-  background-color: rgba(231, 76, 60, 0.15);
-  color: rgba(192, 57, 43, 1.0);
+.danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
 }
 
-.accept {
-  background-color: rgba(46, 204, 113, 0.15);
-  color: rgba(39, 174, 96, 1.0);
+.success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border: 1px solid #d6e9c6;
+
 }
 
 .warning {
-  background-color: rgba(241, 196, 15, 0.15);
-  color: rgba(211, 84, 0, 1.0);
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+  border: 1px solid #faebcc;
 }
