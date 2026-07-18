@@ -1,5 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+// НЕ ПОДКЛЮЧАЕМ electronStoreFunctions, yaDiskAPI, notify здесь
+// Они будут работать через IPC
+
 contextBridge.exposeInMainWorld('electronStore', {
   get: (key) => ipcRenderer.invoke('store-get', key),
   set: (key, value) => ipcRenderer.invoke('store-set', key, value),
@@ -7,7 +10,6 @@ contextBridge.exposeInMainWorld('electronStore', {
   delete: (key) => ipcRenderer.invoke('store-delete', key),
   getAll: () => ipcRenderer.invoke('store-all')
 });
-
 
 contextBridge.exposeInMainWorld('fileSystem', {
   get: (path) => ipcRenderer.invoke('get-directory-contents', path),
@@ -28,3 +30,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (filePath) => ipcRenderer.invoke('open-external', filePath)
 });
 
+console.log('✅ Preload script loaded successfully');

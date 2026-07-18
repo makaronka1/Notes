@@ -13,10 +13,11 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
+      sandbox: false,
       contextIsolation: true
     }
   });
-  win.loadFile('index.html');
+  win.loadFile(path.join(__dirname, '../render/index.html'));
 
   win.webContents.openDevTools();
 }

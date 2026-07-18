@@ -379,7 +379,7 @@ async function saveFileChanges(state, newName, newContent = null, titleInput = n
   if (newContent !== null) {
     const saveResult = await window.fileSystem.saveFile(state.currentFilePath, newContent);
     if (saveResult.success) {
-      console.log('✅ Содержимое файла сохранено');
+     createNotify('✅ Содержимое файла сохранено', 'success', 10000);
     } else {
       return { success: false, error: saveResult.error };
     }
@@ -555,3 +555,99 @@ function findNodeByPath(element, targetPath) {
   console.log('❌ Узел не найден');
   return null;
 }
+
+function createContextMenu(x, y, targetElement) {
+  // Удаляем существующее меню, если есть
+  const existingMenu = document.querySelector('.context-menu');
+  if (existingMenu) {
+    existingMenu.remove();
+  }
+  
+  // Создаём меню
+  const menu = document.createElement('div');
+  menu.className = 'context-menu';
+  menu.style.position = 'fixed';
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  menu.style.backgroundColor = '#fff';
+  menu.style.border = '1px solid #ccc';
+  menu.style.borderRadius = '6px';
+  menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+  menu.style.padding = '6px 0';
+  menu.style.zIndex = '9999';
+  menu.style.minWidth = '180px';
+  
+  // Пункты меню
+  const items = [
+    { label: '📋 Копировать', action: () => console.log('Копировать') },
+    { label: '✏️ Переименовать', action: () => console.log('Переименовать') },
+    { label: '🗑️ Удалить', action: () => console.log('Удалить') }
+  ];
+  
+  items.forEach((item, index) => {
+    const menuItem = document.createElement('div');
+    menuItem.textContent = item.label;
+    menuItem.style.padding = '8px 16px';
+    menuItem.style.cursor = 'pointer';
+    menuItem.style.fontSize = '14px';
+    menuItem.style.transition = 'background 0.1s';
+    
+    // Разделитель после первого пункта (опционально)
+    if (index === 1) {
+      menuItem.style.borderTop = '1px solid #eee';
+      menuItem.style.marginTop = '4px';
+      menuItem.style.paddingTop = '8px';
+    }
+    
+    menuItem.addEventListener('mouseenter', () => {
+      menuItem.style.backgroundColor = '#f0f0f0';
+    });
+    
+    menuItem.addEventListener('mouseleave', () => {
+      menuItem.style.backgroundColor = 'transparent';
+    });
+    
+    menuItem.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menu.remove();
+      item.action();
+    });
+    
+    menu.appendChild(menuItem);
+  });
+  
+  document.body.appendChild(menu);
+  
+  // Закрываем меню при клике вне его
+  const closeMenu = (e) => {
+    if (!menu.contains(e.target)) {
+      menu.remove();
+      document.removeEventListener('click', closeMenu);
+    }
+  };
+  
+  setTimeout(() => {
+    document.addEventListener('click', closeMenu);
+  }, 10);
+}
+
+// Для всего документа (пустое место в sidebar)
+document.addEventListener('contextmenu', (event) => {
+  // Проверяем, что клик был на пустом месте в sidebar
+  const sidebar = document.querySelector('.side-bar');
+  if (sidebar && sidebar.contains(event.target)) {
+    // Проверяем, что клик был не на элементе дерева
+    if (!event.target.closest('.tree-node')) {
+      event.preventDefault();
+      createContextMenu(event.clientX, event.clientY, null);
+    }
+  }
+});
+// В createTreeNode для файлов/папок
+span.addEventListener('contextmenu', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  createContextMenu(event.clientX, event.clientY, span);
+});
+
