@@ -1,0 +1,16 @@
+.context-menu {
+  background-color : #fff;
+  border : 1px solid #ccc;
+  border-radius : 6px;
+  box-shadow :0 4px 12px rgba(0,0,0,0.15);
+  padding :6px 0;
+  z-index: 9999;
+  min-width : 180px;
+}
+
+.menu-item {
+  padding:  8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.1s;
+}

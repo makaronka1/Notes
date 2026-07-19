@@ -1,5 +1,6 @@
 let btn = document.querySelector('#btn');
 let sendBtn = document.querySelector('#sendBtn');
+let sideBar = document.querySelector('.side-bar');
 let selectedFolderPath = null;
 
 async function getFiles(path) {
@@ -569,13 +570,6 @@ function createContextMenu(x, y, targetElement) {
   menu.style.position = 'fixed';
   menu.style.left = x + 'px';
   menu.style.top = y + 'px';
-  menu.style.backgroundColor = '#fff';
-  menu.style.border = '1px solid #ccc';
-  menu.style.borderRadius = '6px';
-  menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-  menu.style.padding = '6px 0';
-  menu.style.zIndex = '9999';
-  menu.style.minWidth = '180px';
   
   // Пункты меню
   const items = [
@@ -586,12 +580,8 @@ function createContextMenu(x, y, targetElement) {
   
   items.forEach((item, index) => {
     const menuItem = document.createElement('div');
+    menuItem.className = 'menu-item';
     menuItem.textContent = item.label;
-    menuItem.style.padding = '8px 16px';
-    menuItem.style.cursor = 'pointer';
-    menuItem.style.fontSize = '14px';
-    menuItem.style.transition = 'background 0.1s';
-    
     // Разделитель после первого пункта (опционально)
     if (index === 1) {
       menuItem.style.borderTop = '1px solid #eee';
@@ -644,10 +634,10 @@ document.addEventListener('contextmenu', (event) => {
   }
 });
 // В createTreeNode для файлов/папок
-span.addEventListener('contextmenu', (event) => {
+sideBar.addEventListener('contextmenu', (event) => {
   event.preventDefault();
   event.stopPropagation();
   
-  createContextMenu(event.clientX, event.clientY, span);
+  createContextMenu(event.clientX, event.clientY, sideBar);
 });
 
