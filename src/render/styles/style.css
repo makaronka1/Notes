@@ -22,6 +22,51 @@
   position: fixed;
 }
 
+/* Выделение только того узла, на который навели */
+.side-bar .tree-node {
+  padding: 0;
+  transition: background-color 0.15s ease;
+  position: relative;
+}
+
+/* Выделение только при наведении на сам узел, а не на его детей */
+.side-bar .tree-node:hover {
+  background-color: #e8e8e8;
+}
+
+/* НО! Не подсвечиваем родителя, когда наведены на его ребёнка */
+.side-bar .tree-node .tree-node:hover {
+  background-color: #e8e8e8;
+}
+
+/* Отменяем подсветку родителя при наведении на ребёнка */
+.side-bar .tree-node:has(.tree-node:hover) {
+  background-color: transparent;
+}
+
+.side-bar .file-item,
+.side-bar .directory-item {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  transition: color 0.15s ease;
+}
+
+/* Цвет текста при наведении на узел */
+.side-bar .tree-node:hover > .file-item {
+  color: #1a73e8;
+}
+
+.side-bar .tree-node:hover > .directory-item {
+  color: #d35400;
+}
+
+/* Отключаем hover на span (чтобы не было двойного выделения) */
+.side-bar .file-item:hover,
+.side-bar .directory-item:hover {
+  background-color: transparent !important;
+}
+
 .main-place {
   flex: 1;
   height: 100%;
@@ -134,6 +179,9 @@
 
 .file-item {
   color : #343434;
+  max-width: 90%;
+  overflow:  hidden;
+  padding: 4px 12px;
 }
 
 .directory-item {
@@ -151,7 +199,7 @@
   padding: 5px 0;
   border-radius: 6px;
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
   font-family: inherit;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
