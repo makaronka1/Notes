@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const Store = require('electron-store');
 
+
 const store = new Store.default();
 
 function createWindow() {
@@ -214,6 +215,18 @@ ipcMain.handle('rename-file', async (event, oldPath, newPath) => {
     return { success: true };
   } catch (error) {
     console.error('Ошибка переименования файла:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+// Удаление файла
+ipcMain.handle('delete-file', async (event, path) => {
+  try {
+    // Отправляем файл в Корзину
+    await shell.trashItem(path);
+    return { success: true };
+  } catch (error) {
+    console.error('Ошибка перемещения в корзину:', error);
     return { success: false, error: error.message };
   }
 });

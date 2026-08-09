@@ -16,7 +16,8 @@ contextBridge.exposeInMainWorld('fileSystem', {
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
   readFileAsBase64: (filePath) => ipcRenderer.invoke('read-file-base64', filePath),
   saveFile: (filePath, content) => ipcRenderer.invoke('save-file-text', filePath, content),
-  renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', oldPath, newPath)
+  renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', oldPath, newPath),
+  deleteFile: (path) => ipcRenderer.invoke('delete-file', path)
 });
 
 contextBridge.exposeInMainWorld('yandexAPI', {

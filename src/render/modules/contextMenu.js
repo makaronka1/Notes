@@ -22,7 +22,9 @@ function createContextMenu(x, y, targetElement) {
     items = [
       { label: '📄 Открыть', action: () => console.log('Открыть файл') },
       { label: '✏️ Переименовать', action: () => console.log('Переименовать файл') },
-      { label: '🗑️ Удалить', action: () => console.log('Удалить файл') }
+      { label: '🗑️ Удалить', action: () => {
+        deleteFile(targetElement);
+      } }
     ];
   } else if (isDirectory) {
     items = [
@@ -65,4 +67,16 @@ function createContextMenu(x, y, targetElement) {
   setTimeout(() => {
     document.addEventListener('click', closeMenu);
   }, 10);
+}
+
+async function deleteFile (targetElement) {
+  let path = targetElement.getAttribute('data-path');
+  console.log(path);
+  const deleteResult =  await window.fileSystem.deleteFile(path);
+
+  if(deleteResult.success) {
+    createNotify(`✅ Файл Удалён`, 'success', 10000);
+  } else {
+    createNotify(`Ошибка удаления: ${deleteResult.error}`, 'danger', 10000);
+  }
 }
