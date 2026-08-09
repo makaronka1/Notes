@@ -2,6 +2,7 @@ let btn = document.querySelector('#btn');
 let sendBtn = document.querySelector('#sendBtn');
 let sideBar = document.querySelector('.side-bar');
 let selectedFolderPath = null;
+let openFolders = new Set();
 
 async function getFiles(path) {
   let files = await window.fileSystem.get(path);
@@ -54,16 +55,31 @@ async function handleSelectFolder() {
 
 
 async function renderFileTree() {
-  // Получаем дерево с корневой папкой (теперь это объект, а не массив)
   const tree = await getAllFilesFromFileSystem();
   const sideBar = document.querySelector('.side-bar');
   
-  // Очищаем sidebar
   sideBar.innerHTML = '';
   
-  // Создаём узел для корневой папки (tree - это уже объект корневой папки)
   const rootNode = createTreeNode(tree);
   rootNode.classList.add('root-tree-node');
+  
+  // ✅ Корневая папка всегда открыта
+  const rootSpan = rootNode.querySelector('.directory-item');
+  const rootChildUl = rootNode.querySelector('.tree-children');
+  
+  if (rootSpan && rootChildUl) {
+    // Добавляем корневую папку в открытые (если ещё не добавлена)
+    if (tree.path && !openFolders.has(tree.path)) {
+      openFolders.add(tree.path);
+    }
+    
+    rootChildUl.style.display = 'block';
+    setTimeout(() => {
+      rootChildUl.classList.add('open');
+    }, 10);
+    const folderIcon = rootSpan.querySelector('.folder-icon');
+    if (folderIcon) folderIcon.textContent = '📂';
+  }
   
   sideBar.appendChild(rootNode);
 }
@@ -80,17 +96,17 @@ function getDisplayName(item) {
   return item.name;
 }
 
-function createTreeNode(item) {
+function createTreeNode(item, isRoot = false) {
   const li = document.createElement('li');
   li.className = 'tree-node';
-  li.dataset.path = item.path; // ✅ Сохраняем путь для всех узлов
-  li.dataset.type = item.type; // ✅ Сохраняем тип узла
+  li.dataset.path = item.path;
+  li.dataset.type = item.type;
   
   const span = document.createElement('span');
   const displayName = getDisplayName(item);
   span.textContent = displayName;
   span.className = item.type === 'directory' ? 'directory-item' : 'file-item';
-  span.dataset.path = item.path; // ✅ Сохраняем путь и на span
+  span.dataset.path = item.path;
   
   // Добавляем иконки
   if (item.type === 'directory') {
@@ -102,7 +118,6 @@ function createTreeNode(item) {
   // Обработчик для файлов
   if (item.type === 'file') {
     span.style.cursor = 'pointer';
-    // ✅ Сохраняем обработчик с путём
     const clickHandler = async () => {
       console.log('Выбран файл:', item.path);
       await openFileInMainPlace(item.path);
@@ -136,7 +151,22 @@ function createTreeNode(item) {
       childUl.appendChild(emptyMsg);
     }
     
-    let isOpen = false;
+    // ✅ Восстанавливаем состояние открытия из global Set
+    const wasOpen = openFolders.has(item.path);
+    
+    if (wasOpen) {
+      childUl.style.display = 'block';
+      setTimeout(() => {
+        childUl.classList.add('open');
+      }, 10);
+      const folderIcon = span.querySelector('.folder-icon');
+      if (folderIcon) folderIcon.textContent = '📂';
+    } else {
+      childUl.style.display = 'none';
+    }
+    
+    let isOpen = wasOpen;
+    
     span.addEventListener('click', (e) => {
       e.stopPropagation();
       
@@ -150,17 +180,19 @@ function createTreeNode(item) {
           }
         }, 250);
         if (folderIcon) folderIcon.textContent = '📁';
+        // ✅ Удаляем из открытых
+        openFolders.delete(item.path);
       } else {
         childUl.style.display = 'block';
         setTimeout(() => {
           childUl.classList.add('open');
         }, 10);
         if (folderIcon) folderIcon.textContent = '📂';
+        // ✅ Добавляем в открытые
+        openFolders.add(item.path);
       }
       isOpen = !isOpen;
     });
-    
-    childUl.style.display = 'none';
     
     li.appendChild(span);
     li.appendChild(childUl);
@@ -451,51 +483,50 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
 async function updateTreeNode(oldPath, newPath = null, newName = null) {
   const sideBar = document.querySelector('.side-bar');
   
-  // Если путь не изменился, используем старый
   const targetPath = newPath || oldPath;
   const targetName = newName || getDisplayName({ 
     name: targetPath.split('\\').pop().split('/').pop(), 
     type: 'file' 
   });
   
-  // Ищем узел в дереве по пути
   let targetSpan = findNodeByPath(sideBar, oldPath);
   
   if (targetSpan) {
     console.log('✅ Найден узел для обновления:', targetSpan);
     
-    // Определяем тип узла
     const isDirectory = targetSpan.classList.contains('directory-item');
     
-    // Обновляем имя узла
+    // Обновляем имя и иконку
     targetSpan.textContent = targetName;
-    
-    // Обновляем иконку и структуру
     if (isDirectory) {
       targetSpan.innerHTML = '<span class="folder-icon">📁</span> ' + targetName;
     } else {
       targetSpan.innerHTML = '📄 ' + targetName;
     }
     
-    // Обновляем путь в data-атрибуте
+    // Обновляем путь в data-атрибутах
     targetSpan.dataset.path = targetPath;
-    
-    // Обновляем путь в li
     const li = targetSpan.closest('li');
     if (li) {
       li.dataset.path = targetPath;
     }
     
-    // Обновляем путь в обработчике клика (для файлов)
+    // ✅ Обновляем состояние открытых папок
+    if (isDirectory && oldPath !== newPath) {
+      if (openFolders.has(oldPath)) {
+        openFolders.delete(oldPath);
+        openFolders.add(targetPath);
+      }
+    }
+    
+    // Обновляем обработчик для файлов
     if (!isDirectory) {
       const clickHandler = targetSpan._clickHandler;
       if (clickHandler) {
-        // Создаём новый обработчик с обновлённым путём
         const newHandler = async () => {
           console.log('Выбран файл:', targetPath);
           await openFileInMainPlace(targetPath);
         };
-        // Заменяем старый обработчик новым
         targetSpan.removeEventListener('click', clickHandler);
         targetSpan._clickHandler = newHandler;
         targetSpan.addEventListener('click', newHandler);
@@ -566,4 +597,10 @@ document.querySelector('.side-bar').addEventListener('contextmenu', (event) => {
     createContextMenu(event.clientX, event.clientY, null);
   }
 });
+
+document.addEventListener('refreshFileTree', async () => {
+  console.log('🔄 Получен сигнал на обновление дерева');
+  await renderFileTree();
+});
+
 

@@ -30,7 +30,6 @@ function createContextMenu(x, y, targetElement) {
     items = [
       { label: '📂 Создать папку', action: () => {
         createLocalDirectory(targetElement);
-        createInput(targetElement);
       } },
       { label: '📄 Создать файл', action: () => console.log('Создать файл в папке') },
       { label: '✏️ Переименовать', action: () => console.log('Переименовать папку') },
@@ -79,6 +78,7 @@ async function deleteElement (targetElement) {
 
   if(deleteResult.success) {
     createNotify(`✅ Элемент Удалён`, 'success', 10000);
+    triggerTreeRefresh();
   } else {
     createNotify(`Ошибка удаления: ${deleteResult.error}`, 'danger', 10000);
   }
@@ -91,9 +91,15 @@ async function createLocalDirectory(targetElement) {
   try {
     const result = await window.electronAPI.createDirectory(path);
     console.log(result);
+    triggerTreeRefresh();
     return result.success;
   } catch (error) {
     console.error('Ошибка создания папки:', error);
     return false;
   }
+}
+
+function triggerTreeRefresh() {
+  const event = new CustomEvent('refreshFileTree');
+  document.dispatchEvent(event);
 }
