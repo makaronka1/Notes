@@ -135,8 +135,37 @@ ipcMain.handle('save-file', async (event, filePath, fileData) => {
 // Создание директории
 ipcMain.handle('create-directory', async (event, dirPath) => {
   try {
-    await fs.mkdir(dirPath, { recursive: true });
-    return { success: true };
+    // Проверяем, существует ли папка
+    try {
+      await fs.access(dirPath);
+      // Папка существует → генерируем новое имя
+      const dirName = path.basename(dirPath);
+      const parentDir = path.dirname(dirPath);
+      
+      let counter = 2;
+      let newDirPath = path.join(parentDir, `${dirName} (${counter})`);
+      
+      // Продолжаем увеличивать счётчик, пока не найдём свободное имя
+      while (true) {
+        try {
+          await fs.access(newDirPath);
+          counter++;
+          newDirPath = path.join(parentDir, `${dirName} (${counter})`);
+        } catch {
+          // Папки с таким именем нет — выходим из цикла
+          break;
+        }
+      }
+      
+      // Создаём папку с новым именем
+      await fs.mkdir(newDirPath, { recursive: true });
+      return { success: true, path: newDirPath, name: path.basename(newDirPath) };
+      
+    } catch {
+      // Папки не существует — создаём с переданным именем
+      await fs.mkdir(dirPath, { recursive: true });
+      return { success: true, path: dirPath, name: path.basename(dirPath) };
+    }
   } catch (error) {
     console.error('Ошибка создания директории:', error);
     return { success: false, error: error.message };

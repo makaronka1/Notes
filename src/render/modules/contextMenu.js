@@ -28,7 +28,10 @@ function createContextMenu(x, y, targetElement) {
     ];
   } else if (isDirectory) {
     items = [
-      { label: '📂 Открыть', action: () => console.log('Открыть папку') },
+      { label: '📂 Создать папку', action: () => {
+        createLocalDirectory(targetElement);
+        createInput(targetElement);
+      } },
       { label: '📄 Создать файл', action: () => console.log('Создать файл в папке') },
       { label: '✏️ Переименовать', action: () => console.log('Переименовать папку') },
       { label: '🗑️ Удалить', action: () => deleteElement(targetElement) }
@@ -78,5 +81,19 @@ async function deleteElement (targetElement) {
     createNotify(`✅ Элемент Удалён`, 'success', 10000);
   } else {
     createNotify(`Ошибка удаления: ${deleteResult.error}`, 'danger', 10000);
+  }
+}
+
+// Функция создания локальной папки (через IPC)
+async function createLocalDirectory(targetElement) {
+  let path = targetElement.getAttribute('data-path') + '\/Новая папка';
+  console.log(path);
+  try {
+    const result = await window.electronAPI.createDirectory(path);
+    console.log(result);
+    return result.success;
+  } catch (error) {
+    console.error('Ошибка создания папки:', error);
+    return false;
   }
 }

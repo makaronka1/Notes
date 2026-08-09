@@ -175,17 +175,6 @@ function createTreeNode(item) {
 })();
 
 
-
-// Функция создания локальной папки (через IPC)
-async function createLocalDirectory(dirPath) {
-  try {
-    const result = await window.electronAPI.createDirectory(dirPath);
-    return result.success;
-  } catch (error) {
-    console.error('Ошибка создания папки:', error);
-    return false;
-  }
-}
 //btn.addEventListener('click', setName); // Вызываем функцию
 
 // Функция открытия файла в главной области
