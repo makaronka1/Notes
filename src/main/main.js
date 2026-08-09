@@ -220,7 +220,7 @@ ipcMain.handle('rename-file', async (event, oldPath, newPath) => {
 });
 
 // Удаление файла
-ipcMain.handle('delete-file', async (event, path) => {
+ipcMain.handle('delete-element', async (event, path) => {
   try {
     // Отправляем файл в Корзину
     await shell.trashItem(path);
