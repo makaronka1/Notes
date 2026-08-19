@@ -74,12 +74,15 @@ function createContextMenu(x, y, targetElement) {
 async function deleteElement (targetElement) {
   let path = targetElement.getAttribute('data-path');
   const fileViewer = document.querySelector('.file-viewer');
-  const fileViewerPath = fileViewer.getAttribute('data-path');
+  let fileViewerPath;
+  if (fileViewer) {
+    fileViewerPath = fileViewer.getAttribute('data-path');
+  }
 
   console.log(path);
   const deleteResult =  await window.fileSystem.deleteElement(path);
 
-  if (fileViewerPath == path) {
+  if (fileViewerPath && fileViewerPath == path) {
     fileViewer.remove();
   }
 
