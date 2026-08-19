@@ -239,6 +239,8 @@ async function openFileInMainPlace(filePath) {
   // Создаём интерфейс
   const fileViewer = createFileViewer();
   const titleInput = createTitleInput(fileNameWithoutExtension);
+
+  fileViewer.setAttribute('data-path', filePath);
   
   // Обработчик изменения имени с задержкой 1 секунда
   titleInput.addEventListener('input', (e) => {

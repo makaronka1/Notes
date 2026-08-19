@@ -73,8 +73,15 @@ function createContextMenu(x, y, targetElement) {
 
 async function deleteElement (targetElement) {
   let path = targetElement.getAttribute('data-path');
+  const fileViewer = document.querySelector('.file-viewer');
+  const fileViewerPath = fileViewer.getAttribute('data-path');
+
   console.log(path);
   const deleteResult =  await window.fileSystem.deleteElement(path);
+
+  if (fileViewerPath == path) {
+    fileViewer.remove();
+  }
 
   if(deleteResult.success) {
     createNotify(`✅ Элемент Удалён`, 'success', 10000);
