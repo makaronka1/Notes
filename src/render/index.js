@@ -15,6 +15,15 @@ async function getAllFilesFromFileSystem(path = null, depth = 0, maxDepth = 10) 
   
   let folder = path || await getField('folder');
   let items = await getFiles(folder);
+  
+  items.sort((a, b) => {
+  // Сначала файлы
+  if (a.isDirectory && !b.isDirectory) return 1;
+  if (!a.isDirectory && b.isDirectory) return -1;
+  
+  // Если оба папки или оба файлы — сортируем по имени
+  return a.name.localeCompare(b.name);
+});
   let children = [];
   
   for (let item of items) {
