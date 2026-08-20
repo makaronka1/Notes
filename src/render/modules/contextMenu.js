@@ -20,8 +20,11 @@ function createContextMenu(x, y, targetElement) {
   
   if (isFile) {
     items = [
-      { label: '📄 Открыть', action: () => console.log('Открыть файл') },
-      { label: '✏️ Переименовать', action: () => console.log('Переименовать файл') },
+      { label: '📄 Открыть', action: () => {
+        const filePath = targetElement.getAttribute('data-path');
+        openFileInMainPlace(filePath)
+      } },
+      { label: '✏️ Переименовать', action: () => renameFromContextMenu(targetElement) },
       { label: '🗑️ Удалить', action: () => {
         deleteElement(targetElement);
       } }
@@ -32,7 +35,7 @@ function createContextMenu(x, y, targetElement) {
         createLocalDirectory(targetElement);
       } },
       { label: '📄 Создать файл', action: () => createFile(targetElement) },
-      { label: '✏️ Переименовать', action: () => console.log('Переименовать папку') },
+      { label: '✏️ Переименовать', action: () => renameFromContextMenu(targetElement) },
       { label: '🗑️ Удалить', action: () => deleteElement(targetElement) }
     ];
   } else {
@@ -120,6 +123,66 @@ async function createFile(targetElement, fileExtension = '.md') {
   } catch (error) {
     console.error('Ошибка создания файла:', error);
     return false;
+  }
+}
+
+async function renameFromContextMenu (targetElement) {
+  const isDirectory = targetElement.classList[0] == 'directory-item' ? true : false;
+
+  if (isDirectory) {
+    let currentName = targetElement.textContent;
+
+    const folderIcon = targetElement.querySelector('.folder-icon');
+    if (folderIcon) {
+      currentName = currentName.slice(3);
+    }
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'input-rename';
+
+    if (targetElement._clickHandler) {
+      targetElement.removeEventListener('click', targetElement._clickHandler);
+      targetElement._clickHandler = null;
+    }
+
+    targetElement.innerHTML = '';
+    targetElement.appendChild(input);
+    input.focus();
+
+    const oldDirPath = targetElement.getAttribute('data-path');
+    const newDirPath = oldDirPath.slice(0, oldDirPath.lastIndexOf('\\') + 1);
+    
+    const renameEvent = async () => {
+      if (input.value == '') {
+        createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
+        triggerTreeRefresh();
+        return;
+      }
+      const newFolderName = newDirPath + input.value;
+      const renameResult = await window.fileSystem.renameFile(oldDirPath, newFolderName);
+
+      if (renameResult.success) {
+        createNotify(`✅ Папка переименована`, 'success', 10000);
+        if (openFolders.has(oldDirPath)) {
+          openFolders.delete(oldDirPath);
+          openFolders.add(newFolderName);
+        }
+
+        triggerTreeRefresh();
+        return { success: true };
+      } else {
+        createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
+        triggerTreeRefresh();
+        
+        return { success: false, error: renameResult.error };
+      }
+    }
+
+    input.addEventListener('blur',  renameEvent);
+  } else {
+
   }
 }
 

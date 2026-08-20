@@ -269,11 +269,11 @@ ipcMain.handle('rename-file', async (event, oldPath, newPath) => {
   try {
     // Проверяем, существует ли файл со старым именем
     await fs.access(oldPath);
-    
+
     // Проверяем, не существует ли файл с новым именем
     try {
       await fs.access(newPath);
-      return { success: false, error: 'Файл с таким именем уже существует' };
+      return { success: false, error: 'Файл с таким именем уже существует' + newPath };
     } catch {
       // Файла с новым именем не существует - хорошо
     }

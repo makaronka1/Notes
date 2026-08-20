@@ -252,3 +252,12 @@
   color: #8a6d3b;
   border: 1px solid #faebcc;
 }
+
+.input-rename {
+  width: 98%;
+  height: 20px;
+  font-size: 14px;
+  font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding: 2px 0 2px 5px ;
+  border-radius: 6px;
+}

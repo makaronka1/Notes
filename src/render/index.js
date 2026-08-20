@@ -175,39 +175,49 @@ function createTreeNode(item, isRoot = false) {
     }
     
     let isOpen = wasOpen;
+
+    const clickHandler = (e) => {
+      toggleFolderState(e, span, childUl, item);
+    };
     
-    span.addEventListener('click', (e) => {
-      e.stopPropagation();
-      
-      const folderIcon = span.querySelector('.folder-icon');
-      
-      if (isOpen) {
-        childUl.classList.remove('open');
-        setTimeout(() => {
-          if (!childUl.classList.contains('open')) {
-            childUl.style.display = 'none';
-          }
-        }, 250);
-        if (folderIcon) folderIcon.textContent = '📁';
-        // ✅ Удаляем из открытых
-        openFolders.delete(item.path);
-      } else {
-        childUl.style.display = 'block';
-        setTimeout(() => {
-          childUl.classList.add('open');
-        }, 10);
-        if (folderIcon) folderIcon.textContent = '📂';
-        // ✅ Добавляем в открытые
-        openFolders.add(item.path);
-      }
-      isOpen = !isOpen;
-    });
+    span._clickHandler = clickHandler;
+    span.addEventListener('click', clickHandler);
     
     li.appendChild(span);
     li.appendChild(childUl);
   }
   
   return li;
+}
+
+function toggleFolderState(e, span, childUl, item) {
+  e.stopPropagation();
+  
+  const folderIcon = span.querySelector('.folder-icon');
+  const li = span.closest('li');
+  
+  // Читаем состояние из data-атрибута
+  let isOpen = li.dataset.open === 'true';
+  
+  if (isOpen) {
+    childUl.classList.remove('open');
+    setTimeout(() => {
+      if (!childUl.classList.contains('open')) {
+        childUl.style.display = 'none';
+      }
+    }, 250);
+    if (folderIcon) folderIcon.textContent = '📁';
+    openFolders.delete(item.path);
+    li.dataset.open = 'false';
+  } else {
+    childUl.style.display = 'block';
+    setTimeout(() => {
+      childUl.classList.add('open');
+    }, 10);
+    if (folderIcon) folderIcon.textContent = '📂';
+    openFolders.add(item.path);
+    li.dataset.open = 'true';
+  }
 }
 
 
