@@ -29,7 +29,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveFile: (filePath, fileData) => ipcRenderer.invoke('save-file', filePath, fileData),
   createDirectory: (dirPath) => ipcRenderer.invoke('create-directory', dirPath),
   openExternal: (filePath) => ipcRenderer.invoke('open-external', filePath),
-  createFile: (filePath) => ipcRenderer.invoke('create-file', filePath)
+  createFile: (filePath, fileExtension) => ipcRenderer.invoke('create-file', filePath, fileExtension)
 
 });
 

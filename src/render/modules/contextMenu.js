@@ -109,11 +109,11 @@ async function createLocalDirectory(targetElement) {
   }
 }
 
-async function createFile(targetElement) {
-  let path = targetElement.getAttribute('data-path') + '\/Новый файл.md';
+async function createFile(targetElement, fileExtension = '.md') {
+  let path = targetElement.getAttribute('data-path') + '\/Новый файл';
   console.log(path);
   try {
-    const result = await window.electronAPI.createFile(path);
+    const result = await window.electronAPI.createFile(path, fileExtension);
     console.log(result);
     triggerTreeRefresh();
     return result.success;
