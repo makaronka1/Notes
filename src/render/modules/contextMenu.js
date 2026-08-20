@@ -31,7 +31,7 @@ function createContextMenu(x, y, targetElement) {
       { label: '📂 Создать папку', action: () => {
         createLocalDirectory(targetElement);
       } },
-      { label: '📄 Создать файл', action: () => console.log('Создать файл в папке') },
+      { label: '📄 Создать файл', action: () => createFile(targetElement) },
       { label: '✏️ Переименовать', action: () => console.log('Переименовать папку') },
       { label: '🗑️ Удалить', action: () => deleteElement(targetElement) }
     ];
@@ -105,6 +105,20 @@ async function createLocalDirectory(targetElement) {
     return result.success;
   } catch (error) {
     console.error('Ошибка создания папки:', error);
+    return false;
+  }
+}
+
+async function createFile(targetElement) {
+  let path = targetElement.getAttribute('data-path') + '\/Новый файл.md';
+  console.log(path);
+  try {
+    const result = await window.electronAPI.createFile(path);
+    console.log(result);
+    triggerTreeRefresh();
+    return result.success;
+  } catch (error) {
+    console.error('Ошибка создания файла:', error);
     return false;
   }
 }

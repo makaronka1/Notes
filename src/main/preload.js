@@ -28,7 +28,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   selectFolder: () => ipcRenderer.invoke('dialog:openDirectory'),
   saveFile: (filePath, fileData) => ipcRenderer.invoke('save-file', filePath, fileData),
   createDirectory: (dirPath) => ipcRenderer.invoke('create-directory', dirPath),
-  openExternal: (filePath) => ipcRenderer.invoke('open-external', filePath)
+  openExternal: (filePath) => ipcRenderer.invoke('open-external', filePath),
+  createFile: (filePath) => ipcRenderer.invoke('create-file', filePath)
+
 });
 
 console.log('✅ Preload script loaded successfully');

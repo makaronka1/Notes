@@ -172,6 +172,45 @@ ipcMain.handle('create-directory', async (event, dirPath) => {
   }
 });
 
+//создание файла
+ipcMain.handle('create-file', async (event, filePath) => {
+  try {
+    try {
+      await fs.access(filePath);
+      // Папка существует → генерируем новое имя
+      const fileName = path.basename(filePath);
+      const parentDir = path.dirname(filePath);
+      
+      let counter = 2;
+      let newFilePath = path.join(parentDir, `${fileName} (${counter})`);
+      
+      // Продолжаем увеличивать счётчик, пока не найдём свободное имя
+      while (true) {
+        try {
+          await fs.access(newFilePath);
+          counter++;
+          newFilePath = path.join(parentDir, `${fileName} (${counter})`);
+        } catch {
+          // Файла с таким именем нет — выходим из цикла
+          break;
+        }
+      }
+      
+      // Создаём файл с новым именем
+      await fs.writeFile(newFilePath, '', { recursive: true });
+      return { success: true, path: newFilePath, name: path.basename(newFilePath) };
+      
+    } catch {
+      // Файла не существует — создаём с переданным именем
+      await fs.writeFile(filePath, '', { recursive: true });
+      return { success: true, path: filePath, name: path.basename(filePath) };
+    }
+  } catch (error) {
+    console.error('Ошибка создания файла:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 // Чтение текстового файла
 ipcMain.handle('read-file', async (event, filePath) => {
   try {
