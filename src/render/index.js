@@ -476,7 +476,7 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
   
   try {
     // Переименовываем файл
-    const renameResult = await window.fileSystem.renameFile(state.currentFilePath, newFilePath);
+    const renameResult = await window.fileSystem.renameObject(state.currentFilePath, newFilePath);
     
     if (renameResult.success) {
       createNotify(`✅ Файл переименован: ${state.currentFullFileName} -> ${newFullName}`, 'success', 10000);
@@ -490,12 +490,12 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
       
       return { success: true };
     } else {
-      console.error(`❌ Ошибка переименования: ${renameResult.error}`);
+      createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
       if (titleInput) titleInput.value = state.currentFileNameWithoutExtension;
       return { success: false, error: renameResult.error };
     }
   } catch (error) {
-    console.error(`❌ Ошибка: ${error.message}`);
+    createNotify(`❌ Ошибка: ${error.message}`, 'danger', 10000);
     if (titleInput) titleInput.value = state.currentFileNameWithoutExtension;
     return { success: false, error: error.message };
   }

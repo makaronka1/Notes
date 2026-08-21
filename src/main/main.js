@@ -264,25 +264,25 @@ ipcMain.handle('open-external', async (event, filePath) => {
   }
 });
 
-// Переименование файла
-ipcMain.handle('rename-file', async (event, oldPath, newPath) => {
+// Переименование объекта
+ipcMain.handle('rename-object', async (event, oldPath, newPath) => {
   try {
-    // Проверяем, существует ли файл со старым именем
+    // Проверяем, существует ли объект со старым именем
     await fs.access(oldPath);
 
-    // Проверяем, не существует ли файл с новым именем
+    // Проверяем, не существует ли объект с новым именем
     try {
       await fs.access(newPath);
-      return { success: false, error: 'Файл с таким именем уже существует' + newPath };
+      return { success: false, error: 'Объект с таким именем уже существует' + newPath };
     } catch {
-      // Файла с новым именем не существует - хорошо
+      // Объект с новым именем не существует - хорошо
     }
     
-    // Переименовываем файл
+    // Переименовываем объект
     await fs.rename(oldPath, newPath);
     return { success: true };
   } catch (error) {
-    console.error('Ошибка переименования файла:', error);
+    console.error('Ошибка переименования объекта:', error);
     return { success: false, error: error.message };
   }
 });

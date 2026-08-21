@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('fileSystem', {
   readFile: (filePath) => ipcRenderer.invoke('read-file', filePath),
   readFileAsBase64: (filePath) => ipcRenderer.invoke('read-file-base64', filePath),
   saveFile: (filePath, content) => ipcRenderer.invoke('save-file-text', filePath, content),
-  renameFile: (oldPath, newPath) => ipcRenderer.invoke('rename-file', oldPath, newPath),
+  renameObject: (oldPath, newPath) => ipcRenderer.invoke('rename-object', oldPath, newPath),
   deleteElement: (path) => ipcRenderer.invoke('delete-element', path)
 });
 
