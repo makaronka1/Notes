@@ -40,8 +40,8 @@ function createContextMenu(x, y, targetElement) {
     ];
   } else {
     items = [
-      { label: '📄 Создать файл', action: () => console.log('Создать файл') },
-      { label: '📁 Создать папку', action: () => console.log('Создать папку') }
+      { label: '📄 Создать файл', action: () => createFile() },
+      { label: '📁 Создать папку', action: () => createLocalDirectory() }
     ];
   }
   
@@ -98,32 +98,56 @@ async function deleteElement (targetElement) {
 }
 
 // Функция создания локальной папки (через IPC)
-async function createLocalDirectory(targetElement) {
-  let path = targetElement.getAttribute('data-path') + '\/Новая папка';
-  console.log(path);
-  try {
-    const result = await window.electronAPI.createDirectory(path);
-    console.log(result);
-    triggerTreeRefresh();
-    return result.success;
-  } catch (error) {
-    console.error('Ошибка создания папки:', error);
-    return false;
+async function createLocalDirectory(targetElement = false) {
+  if (targetElement) {
+    let path = targetElement.getAttribute('data-path') + '\/Новая папка';
+    console.log(path);
+    try {
+      const result = await window.electronAPI.createDirectory(path);
+      console.log(result);
+      triggerTreeRefresh();
+      return result.success;
+    } catch (error) {
+      console.error('Ошибка создания папки:', error);
+      return false;
+    }
+  } else {
+    const mainFolderPath = await getField('folder');
+    try {
+      const result = await window.electronAPI.createDirectory(mainFolderPath + '\/Новая папка');
+      triggerTreeRefresh();
+      return result.success;
+    } catch (error) {
+      console.error('Ошибка создания папки:', error);
+      return false;
+    }
   }
+  
 }
 
-async function createFile(targetElement, fileExtension = '.md') {
-  let path = targetElement.getAttribute('data-path') + '\/Новый файл';
-  console.log(path);
-  try {
-    const result = await window.electronAPI.createFile(path, fileExtension);
-    console.log(result);
-    triggerTreeRefresh();
-    return result.success;
-  } catch (error) {
-    console.error('Ошибка создания файла:', error);
-    return false;
+async function createFile(targetElement = false, fileExtension = '.md') {
+  if (targetElement) {
+    let path = targetElement.getAttribute('data-path') + '\/Новый файл';
+    try {
+      const result = await window.electronAPI.createFile(path, fileExtension);
+      triggerTreeRefresh();
+      return result.success;
+    } catch (error) {
+      createNotify(`Ошибка создания файла: ${error}`, 'danger', 10000);
+      return false;
+    }
+  } else {
+    const mainFolderPath = await getField('folder');
+    try {
+      const result = await window.electronAPI.createFile(mainFolderPath + '\/Новый файл', fileExtension);
+      triggerTreeRefresh();
+      return result.success;
+    } catch (error) {
+      createNotify(`Ошибка создания файла: ${error}`, 'danger', 10000);
+      return false;
+    }
   }
+    
 }
 
 async function renameFromContextMenu (targetElement) {
