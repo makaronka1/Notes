@@ -236,7 +236,12 @@ async function renameFromContextMenu (targetElement) {
       const renameResult = await window.fileSystem.renameObject(oldFilePath, newFileName);
 
       if (renameResult.success) {
-        const fileViewerPath = document.querySelector('.file-viewer').getAttribute('data-path');
+        const fileViewer = document.querySelector('.file-viewer');
+        let fileViewerPath = null;
+
+        if (fileViewer) {
+          fileViewerPath = fileViewer.getAttribute('data-path')
+        }
 
         if (fileViewerPath == oldFilePath) {
           await openFileInMainPlace(newFileName);
