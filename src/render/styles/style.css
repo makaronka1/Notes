@@ -182,10 +182,12 @@
   max-width: 90%;
   overflow:  hidden;
   padding: 4px 12px;
+  user-select: none;
 }
 
 .directory-item {
   color : #343434;
+  user-select: none;
 }
 
 .error-message {
