@@ -168,6 +168,7 @@ function createTreeNode(item, isRoot = false) {
     const wasOpen = openFolders.has(item.path);
     
     if (wasOpen) {
+      li.dataset.open = 'true'
       childUl.style.display = 'block';
       setTimeout(() => {
         childUl.classList.add('open');
