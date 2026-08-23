@@ -154,17 +154,9 @@ async function renameFromContextMenu (targetElement) {
   const isDirectory = targetElement.classList[0] == 'directory-item' ? true : false;
 
   if (isDirectory) {
-    let currentName = targetElement.textContent;
+    let currentName = targetElement.textContent.slice(3);
 
-    const folderIcon = targetElement.querySelector('.folder-icon');
-    if (folderIcon) {
-      currentName = currentName.slice(3);
-    }
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = currentName;
-    input.className = 'input-rename';
+    const input = createInputForRename(currentName);
 
     if (targetElement._clickHandler) {
       targetElement.removeEventListener('click', targetElement._clickHandler);
@@ -177,41 +169,19 @@ async function renameFromContextMenu (targetElement) {
 
     const oldDirPath = targetElement.getAttribute('data-path');
     const newDirPath = oldDirPath.slice(0, oldDirPath.lastIndexOf('\\') + 1);
-    
-    const renameEvent = async () => {
-      if (input.value == '') {
-        createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
-        triggerTreeRefresh();
-        return;
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        input.blur();
       }
-      const newFolderName = newDirPath + input.value;
-      const renameResult = await window.fileSystem.renameObject(oldDirPath, newFolderName);
-
-      if (renameResult.success) {
-        createNotify(`✅ Папка переименована`, 'success', 10000);
-        if (openFolders.has(oldDirPath)) {
-          openFolders.delete(oldDirPath);
-          openFolders.add(newFolderName);
-        }
-
-        triggerTreeRefresh();
-        return { success: true };
-      } else {
-        createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
-        triggerTreeRefresh();
-        
-        return { success: false, error: renameResult.error };
-      }
-    }
-
-    input.addEventListener('blur',  renameEvent);
+    });
+    input.addEventListener('blur',  () => {
+      renameEvent(input, oldDirPath, newDirPath);
+    });
   } else {
-    let currentName = targetElement.textContent.slice(3);
-    console.log(currentName);
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = currentName;
-    input.className = 'input-rename';
+    let currentName = targetElement.textContent.slice(3);    
+    const input = createInputForRename(currentName);
 
     if (targetElement._clickHandler) {
       targetElement.removeEventListener('click', targetElement._clickHandler);
@@ -226,37 +196,86 @@ async function renameFromContextMenu (targetElement) {
     const newFilePath = oldFilePath.slice(0, oldFilePath.lastIndexOf('\\') + 1);
     const fileExtension = '.' + oldFilePath.split('.').pop().toLowerCase();
 
-    const renameEvent = async () => {
-      if (input.value == '') {
-        createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
-        triggerTreeRefresh();
-        return;
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        input.blur();
       }
-      const newFileName = newFilePath + input.value + fileExtension;
-      const renameResult = await window.fileSystem.renameObject(oldFilePath, newFileName);
+    });
+    input.addEventListener('blur',  () => {
+      renameEvent(input, oldFilePath, newFilePath, fileExtension);
+    });
+  }
+}
 
-      if (renameResult.success) {
-        const fileViewer = document.querySelector('.file-viewer');
-        let fileViewerPath = null;
+function createInputForRename (content = false) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'input-rename';
+  if (content) {
+    input.value = content;
+  }
 
-        if (fileViewer) {
-          fileViewerPath = fileViewer.getAttribute('data-path')
-        }
+  return input;
+}
 
-        if (fileViewerPath == oldFilePath) {
-          await openFileInMainPlace(newFileName);
-        }
-        createNotify(`✅ Файл переименован`, 'success', 10000);
-        triggerTreeRefresh();
-        return { success: true };
-      } else {
-        createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
-        triggerTreeRefresh();
-        return { success: false, error: renameResult.error };
+async function renameEvent(input, oldPath, newPath, extension = false) {
+  if (input.value == '') {
+    createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
+    triggerTreeRefresh();
+    return;
+  }
+
+  let newObjectName;
+
+  if (extension) {
+    newObjectName = newPath + input.value + extension;
+  } else {
+    newObjectName = newPath + input.value;
+  }
+
+  const renameResult = await window.fileSystem.renameObject(oldPath, newObjectName);
+
+
+  if (renameResult.success) {
+    const fileViewer = document.querySelector('.file-viewer');
+    let fileViewerPath = null;
+
+    if (fileViewer) {
+      fileViewerPath = fileViewer.getAttribute('data-path')
+    }
+
+    if (extension) {
+      if (fileViewerPath && fileViewerPath == oldPath) {
+        await openFileInMainPlace(newObjectName);
+      }
+
+      createNotify(`✅ Файл переименован`, 'success', 10000);
+      triggerTreeRefresh();
+      return { success: true };
+    }
+
+    createNotify(`✅ Папка переименована`, 'success', 10000);
+    if (openFolders.has(oldPath)) {
+      openFolders.delete(oldPath);
+      openFolders.add(newObjectName);
+    }
+
+    if (fileViewerPath) {
+      if (fileViewerPath.includes(oldPath)) {
+        let newFileViewerPath = fileViewerPath.replace(oldPath, newObjectName);
+        await openFileInMainPlace(newFileViewerPath);
       }
     }
 
-    input.addEventListener('blur',  renameEvent);
+    triggerTreeRefresh();
+    return { success: true };
+    
+  } else {
+    createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
+    triggerTreeRefresh();
+    return { success: false, error: renameResult.error };
   }
 }
 
