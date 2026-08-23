@@ -161,6 +161,7 @@ function createTreeNode(item, isRoot = false) {
       emptyMsg.style.color = '#999';
       emptyMsg.style.fontStyle = 'italic';
       emptyMsg.style.padding = '4px 8px';
+      emptyMsg.style.userSelect = 'none';
       childUl.appendChild(emptyMsg);
     }
     
