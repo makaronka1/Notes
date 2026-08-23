@@ -168,7 +168,6 @@ async function renameFromContextMenu (targetElement) {
     input.focus();
 
     const oldDirPath = targetElement.getAttribute('data-path');
-    const newDirPath = oldDirPath.slice(0, oldDirPath.lastIndexOf('\\') + 1);
 
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
@@ -177,7 +176,7 @@ async function renameFromContextMenu (targetElement) {
       }
     });
     input.addEventListener('blur',  () => {
-      renameEvent(input, oldDirPath, newDirPath);
+      renameEvent(input, oldDirPath);
     });
   } else {
     let currentName = targetElement.textContent.slice(3);    
@@ -193,7 +192,6 @@ async function renameFromContextMenu (targetElement) {
     input.focus();
 
     const oldFilePath = targetElement.getAttribute('data-path');
-    const newFilePath = oldFilePath.slice(0, oldFilePath.lastIndexOf('\\') + 1);
     const fileExtension = '.' + oldFilePath.split('.').pop().toLowerCase();
 
 
@@ -204,7 +202,7 @@ async function renameFromContextMenu (targetElement) {
       }
     });
     input.addEventListener('blur',  () => {
-      renameEvent(input, oldFilePath, newFilePath, fileExtension);
+      renameEvent(input, oldFilePath, fileExtension);
     });
   }
 }
@@ -220,13 +218,14 @@ function createInputForRename (content = false) {
   return input;
 }
 
-async function renameEvent(input, oldPath, newPath, extension = false) {
+async function renameEvent(input, oldPath, extension = false) {
   if (input.value == '') {
     createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
     triggerTreeRefresh();
     return;
   }
 
+  const newPath = oldPath.slice(0, oldPath.lastIndexOf('\\') + 1);
   let newObjectName;
 
   if (extension) {
