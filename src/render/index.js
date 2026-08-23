@@ -391,8 +391,6 @@ async function readFile(state) {
       pre.textContent = content;
       pre.className = 'file-content-text';
       pre.contentEditable = 'true';
-      pre.style.outline = 'none';
-      pre.style.backgroundColor = '#FFFFFF';
       
       return pre;
       

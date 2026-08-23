@@ -161,6 +161,9 @@
   overflow-x: auto;
   white-space: pre-wrap;
   overflow-y: auto;
+  outline: none;
+  background-color: rgb(255, 255, 255);
+  min-height: 90%;
 }
 
 .file-content-image {
