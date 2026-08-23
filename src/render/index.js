@@ -6,7 +6,7 @@ let openFolders = new Set();
 
 async function getFiles(path) {
   let files = await window.fileSystem.get(path);
-
+  console.log(files.data);
   return files.data;
 }
 
@@ -121,7 +121,11 @@ function createTreeNode(item, isRoot = false) {
   if (item.type === 'directory') {
     span.innerHTML = '<span class="folder-icon">📁</span> ' + span.textContent;
   } else {
-    span.innerHTML = '📄 ' + span.textContent;
+    if (isImageFile(item.name)) {
+      span.innerHTML = '🖼️ ' + span.textContent;
+    } else {
+      span.innerHTML = '📄 ' + span.textContent;
+    }
   }
   
   // Обработчик для файлов
@@ -322,15 +326,25 @@ async function openFileInMainPlace(filePath) {
 }
 
 // Вспомогательная функция: проверка текстового файла
-function isTextFile(extension) {
+function isTextFile(str) {
   const textExtensions = ['txt', 'md', 'js', 'json', 'css', 'html', 'xml', 'svg', 'py', 'java', 'c', 'cpp', 'h', 'ini', 'cfg', 'conf', 'log'];
-  return textExtensions.includes(extension);
+  for (let ext of textExtensions) {
+    if (str.endsWith(ext)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Вспомогательная функция: проверка изображения
-function isImageFile(extension) {
+function isImageFile(str) {
   const imageExtensions = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'ico', 'svg'];
-  return imageExtensions.includes(extension);
+  for (let ext of imageExtensions) {
+    if (str.endsWith(ext)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Функция чтения файла как base64 для изображений
