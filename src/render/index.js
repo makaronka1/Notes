@@ -71,6 +71,7 @@ async function renderFileTree() {
   
   const rootNode = createTreeNode(tree);
   rootNode.classList.add('root-tree-node');
+  rootNode.dataset.open = 'true';
   
   // ✅ Корневая папка всегда открыта
   const rootSpan = rootNode.querySelector('.directory-item');
