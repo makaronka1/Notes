@@ -219,7 +219,9 @@ function createInputForRename (content = false) {
 }
 
 async function renameEvent(input, oldPath, extension = false) {
-  if (input.value == '') {
+  const inputValue = input.value;
+
+  if (inputValue == '') {
     createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
     triggerTreeRefresh();
     return;
@@ -227,11 +229,10 @@ async function renameEvent(input, oldPath, extension = false) {
 
   const newPath = oldPath.slice(0, oldPath.lastIndexOf('\\') + 1);
   let newObjectName;
-
   if (extension) {
-    newObjectName = newPath + input.value + extension;
+    newObjectName = newPath + inputValue + extension;
   } else {
-    newObjectName = newPath + input.value;
+    newObjectName = newPath + inputValue;
   }
 
   const renameResult = await window.fileSystem.renameObject(oldPath, newObjectName);
@@ -251,7 +252,7 @@ async function renameEvent(input, oldPath, extension = false) {
       }
 
       createNotify(`✅ Файл переименован`, 'success', 10000);
-      triggerTreeRefresh();
+      updateTreeNode(oldPath, newObjectName, inputValue);
       return { success: true };
     }
 
