@@ -10,7 +10,17 @@ function createNotifyContainer (targetContainerSelector = 'body') {
 function createNotify(string, type = false, delay = 5000) {
   const notify = document.createElement('div');
   notify.className = `notify-item ${type ? type : ''}`;
-  notify.textContent = string;
+
+  if (type == 'success') {
+    notify.textContent = '✅ ' + string;
+  } else if (type == 'danger') {
+    notify.textContent = '❌ ' + string;
+  } else if (type == 'warning') {
+    notify.textContent = '⚠️ ' + string;
+  } else {
+    notify.textContent = string;
+  }
+  
   
   const notifyContainer = document.querySelector('.notify-container');
 
