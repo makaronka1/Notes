@@ -1,0 +1,83 @@
+.settings-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  background-color: rgba(1, 1, 1, 0.5);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.settings-header {
+  user-select: none;
+}
+
+.settings-container-inner {
+  width: 800px;
+  height: 100%;
+  background-color: burlywood;
+}
+
+.settings-header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.settings-parametrs-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.settings-parametrs-element {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.parametrs-label {
+  min-width: 186px;
+  font-weight: 600;
+  user-select: none;
+}
+
+.parametrs-value {
+  flex-grow: 1;
+}
+
+input.parametrs-value {
+  padding: 2px 0 2px 5px ;
+  border-radius: 6px;
+  font-size: 18px;
+}
+
+.header-closeBtn-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#closeBtn {
+  width: 44px;
+  height: auto;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (min-width: 1439px) {
+  .settings-container-inner {
+    max-height: 900px;
+    margin-bottom: 100px;
+  }
+}

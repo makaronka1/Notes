@@ -57,13 +57,17 @@ async function handleSelectFolder() {
     selectedFolderPath = result.path;
     await setField('folder', selectedFolderPath);
     console.log('Выбрана папка:', selectedFolderPath);
+    return true;
   } else {
     console.log('Пользователь отменил выбор папки.');
+    return false;
   }
 }
 
 
 async function renderFileTree() {
+  const res = await window.electronStore.getAll();
+  console.log(res);
   const tree = await getAllFilesFromFileSystem();
   const sideBar = document.querySelector('.side-bar');
   

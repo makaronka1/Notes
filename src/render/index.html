@@ -6,26 +6,28 @@
   <title>Моё Electron приложение</title>
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="styles/contextMenu.css">
+  <link rel="stylesheet" href="styles/notify.css">
+  <link rel="stylesheet" href="styles/settings.css">
   <link href="https://googleapis.com" rel="stylesheet">
 
 </head>
 
-<body>
+<body id="body">
   <div class="container">
     <div class="side-bar-container">
       <div class="navbar">
         <ul class="navbar-list">
-          <li class="navbar-list-item">
-            <img src="images/file.svg" alt="" srcset="" class="navbar-list-item">
+          <li class="navbar-list-item" id="add-file-btn">
+            <img src="images/file.svg" alt="" srcset="" class="icon navbar-list-item">
           </li>
-          <li class="navbar-list-item">
-            <img src="images/folder.svg" alt="" srcset="" class="navbar-list-item">
+          <li class="navbar-list-item" id="add-folder-btn">
+            <img src="images/folder.svg" alt="" srcset="" class="icon navbar-list-item">
           </li>
-          <li class="navbar-list-item">
-            <img src="images/refresh.svg" alt="" srcset="" class="navbar-list-item">
+          <li class="navbar-list-item" id="refresh-btn">
+            <img src="images/refresh.svg" alt="" srcset="" class="icon navbar-list-item">
           </li>
-          <li class="navbar-list-item">
-            <img src="images/settings.svg" alt="" srcset="" class="navbar-list-item">
+          <li class="navbar-list-item" id="settings-btn">
+            <img src="images/settings.svg" alt="" srcset="" class="icon navbar-list-item">
           </li>
         </ul>
       </div>
@@ -40,11 +42,35 @@
       <input type="text" id="input">-->
       
     </div>
+
+    <div class="settings-container hidden">
+      <div class="settings-container-inner">
+        <div class="settings-header-container">
+          <h1 class="settings-header">Настройки</h1>
+          <div class="header-closeBtn-container">
+            <img src="images/close.svg" class="icon" id="closeBtn"alt="">
+          </div>
+        </div>
+        <div class="settings-parametrs-container">
+          <div class="settings-parametrs-element">
+            <label for="" class="parametrs-label">Корневая папка</label>
+            <span id="FolderValue" class="parametrs-value"></span>
+            <img src="images/change.svg" alt="" class="icon change-icon" id="pathChangeBtn">
+          </div>
+          <div class="settings-parametrs-element" id="APIToken">
+            <label for="APITokenValue" class="parametrs-label">Yandex API Token</label>
+            <input type="text" id="APITokenValue" class="parametrs-value">
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <script src="modules/electronStoreFunctions.js"></script>
   <script src="modules/yaDiskAPI.js"></script>
   <script src="modules/notify.js"></script>
   <script src="modules/contextMenu.js"></script>
+  <script src="modules/navbar.js"></script>
+  <script src="modules/settings.js"></script>
   <script src="index.js"></script>
 </body>
 
