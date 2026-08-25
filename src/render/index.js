@@ -66,8 +66,6 @@ async function handleSelectFolder() {
 
 
 async function renderFileTree() {
-  const res = await window.electronStore.getAll();
-  console.log(res);
   const tree = await getAllFilesFromFileSystem();
   const sideBar = document.querySelector('.side-bar');
   
