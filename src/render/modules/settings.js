@@ -5,6 +5,10 @@ const settingsBtn = document.querySelector('#settings-btn');
 const closeBtn = document.querySelector('#closeBtn');
 const body = document.querySelector('#body');
 const pathChangeBtn = settingsContainer.querySelector('#pathChangeBtn');
+const depthInput = settingsContainer.querySelector('#depthInput');
+const depthValue = settingsContainer.querySelector('#depthValue');
+
+
 
 
 async function fillSettingsValueFromStore (valueElement, key) {
@@ -26,6 +30,15 @@ function toggleVisibilityElement (element) {
 function toggleOverflowXElement (element) {
   element.classList.toggle('overflow-hidden');
 }
+
+async function fillDepthElements(inputElement, valueElement) {
+  const depthValue = await window.electronStore.get('maxDepth');
+  console.log(depthValue)
+  inputElement.value = depthValue;
+  valueElement.textContent = depthValue;
+}
+
+fillDepthElements(depthInput, depthValue);
 
 settingsBtn.addEventListener('click', () => 
   {
@@ -70,4 +83,16 @@ pathChangeBtn.addEventListener('click', async () => {
   } else {
     createNotify('Изменение корневой папки отменено', 'danger', 10000);
   }
+})
+
+
+depthInput.addEventListener('input', (e) => {
+  depthValue.textContent = e.target.value;
+})
+
+depthInput.addEventListener('change', async (e) => {
+  await window.electronStore.set('maxDepth', e.target.value);
+  openFolders.clear();
+  await renderFileTree();
+  createNotify('Максимальная глубина поиска изменена', 'success', 10000);
 })

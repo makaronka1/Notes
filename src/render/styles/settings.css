@@ -39,12 +39,13 @@
   padding: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  align-items: center;
+  gap: 15px;
 }
 
 .parametrs-label {
-  min-width: 186px;
+  min-width: 170px;
   font-weight: 600;
   user-select: none;
 }
@@ -73,6 +74,10 @@ input.parametrs-value {
 
 .hidden {
   display: none;
+}
+
+#depthInput {
+  width: 300px;
 }
 
 @media (min-width: 1439px) {

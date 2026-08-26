@@ -10,7 +10,13 @@ async function getFiles(path) {
   return files.data;
 }
 
-async function getAllFilesFromFileSystem(path = null, depth = 0, maxDepth = 10) {
+async function getAllFilesFromFileSystem(path = null, depth = 0) {
+  let maxDepth = await window.electronStore.get('maxDepth');
+
+  if (!maxDepth) {
+    await window.electronStore.set('maxDepth', 10);
+  }
+
   if (depth > maxDepth) return { children: [] };
   
   let folder = path || await getField('folder');
