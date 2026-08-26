@@ -65,6 +65,7 @@ pathChangeBtn.addEventListener('click', async () => {
   if (result) {
     createNotify('Корневая папка изменена', 'success', 10000);
     fillSettingsValueFromStore(folderValueELement, 'folder');
+    openFolders.clear();
     await renderFileTree();
   } else {
     createNotify('Изменение корневой папки отменено', 'danger', 10000);
