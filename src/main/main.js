@@ -4,11 +4,11 @@ const fs = require('fs').promises;
 const fsSync = require('fs');
 const Store = require('electron-store');
 
-
+let mainWindow = null;
 const store = new Store.default();
 
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1440,
     height: 900,
     webPreferences: {
@@ -18,13 +18,13 @@ function createWindow() {
       contextIsolation: true
     }
   });
-  win.loadFile(path.join(__dirname, '../render/index.html'));
+  mainWindow.loadFile(path.join(__dirname, '../render/index.html'));
 
-  win.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 }
 
 ipcMain.handle('dialog:openDirectory', async () => {
-  const result = await dialog.showOpenDialog({
+  const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory'],
     title: 'Выберите папку'
   });
