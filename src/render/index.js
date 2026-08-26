@@ -4,6 +4,22 @@ let sideBar = document.querySelector('.side-bar');
 let selectedFolderPath = null;
 let openFolders = new Set();
 
+async function fillOpenFolders () {
+  let openFoldersFromStore = await window.electronStore.get('openFolders');
+  if (openFoldersFromStore) {
+    const first = openFoldersFromStore[0];
+    const rootFolder = await window.electronStore.get('folder');
+
+    if (rootFolder && rootFolder == first) {
+      openFolders = new Set(openFoldersFromStore);
+    } else {
+      await window.electronStore.delete('openFolders');
+    }
+  }
+}
+
+fillOpenFolders();
+
 async function getFiles(path) {
   let files = await window.fileSystem.get(path);
   console.log(files.data);
@@ -23,13 +39,14 @@ async function getAllFilesFromFileSystem(path = null, depth = 0) {
   let items = await getFiles(folder);
   
   items.sort((a, b) => {
-  // Сначала файлы
-  if (a.isDirectory && !b.isDirectory) return 1;
-  if (!a.isDirectory && b.isDirectory) return -1;
-  
-  // Если оба папки или оба файлы — сортируем по имени
-  return a.name.localeCompare(b.name);
-});
+    // Сначала файлы
+    if (a.isDirectory && !b.isDirectory) return 1;
+    if (!a.isDirectory && b.isDirectory) return -1;
+    
+    // Если оба папки или оба файлы — сортируем по имени
+    return a.name.localeCompare(b.name);
+  });
+
   let children = [];
   
   for (let item of items) {
@@ -647,4 +664,7 @@ document.addEventListener('refreshFileTree', async () => {
   await renderFileTree();
 });
 
+window.addEventListener('beforeunload', async () => {
+  await window.electronStore.set('openFolders', Array.from(openFolders));
+});
 
