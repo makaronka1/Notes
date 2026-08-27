@@ -7,16 +7,19 @@ const body = document.querySelector('#body');
 const pathChangeBtn = settingsContainer.querySelector('#pathChangeBtn');
 const depthInput = settingsContainer.querySelector('#depthInput');
 const depthValue = settingsContainer.querySelector('#depthValue');
+const openFoldersConditionInput = settingsContainer.querySelector('#openFoldersConditionInput');
 
 
 
 
 async function fillSettingsValueFromStore (valueElement, key) {
   const storeValue = await window.electronStore.get(key);
-  console.log(storeValue);
+  console.log(storeValue, key);
   if (storeValue) {
     if (key == "token") {
       valueElement.value = storeValue;
+    } else if (key == "openFoldersConditionSave") {
+      valueElement.checked = storeValue;
     } else {
       valueElement.textContent = storeValue;
     }
@@ -55,6 +58,7 @@ closeBtn.addEventListener('click', () =>
 
 fillSettingsValueFromStore(APITokenValueElement, 'token');
 fillSettingsValueFromStore(folderValueELement, 'folder');
+fillSettingsValueFromStore(openFoldersConditionInput, 'openFoldersConditionSave');
 
 APITokenValueElement.addEventListener('blur', async () => {
   const inputValue = APITokenValueElement.value;
@@ -95,4 +99,8 @@ depthInput.addEventListener('change', async (e) => {
   openFolders.clear();
   await renderFileTree();
   createNotify('Максимальная глубина поиска изменена', 'success', 10000);
+})
+
+openFoldersConditionInput.addEventListener('change', async (e) => {
+  await window.electronStore.set('openFoldersConditionSave', e.target.checked);
 })

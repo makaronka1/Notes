@@ -45,13 +45,18 @@
 }
 
 .parametrs-label {
-  min-width: 170px;
+  width: 170px;
   font-weight: 600;
   user-select: none;
 }
 
-.parametrs-value {
+.grow {
   flex-grow: 1;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
 }
 
 input.parametrs-value {

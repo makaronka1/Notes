@@ -5,16 +5,21 @@ let selectedFolderPath = null;
 let openFolders = new Set();
 
 async function fillOpenFolders () {
-  let openFoldersFromStore = await window.electronStore.get('openFolders');
-  if (openFoldersFromStore) {
-    const first = openFoldersFromStore[0];
-    const rootFolder = await window.electronStore.get('folder');
+  let openFoldersConditionSave = await window.electronStore.get('openFoldersConditionSave');
+  if (openFoldersConditionSave) {
+    let openFoldersFromStore = await window.electronStore.get('openFolders');
+    if (openFoldersFromStore) {
+      const first = openFoldersFromStore[0];
+      const rootFolder = await window.electronStore.get('folder');
 
-    if (rootFolder && rootFolder == first) {
-      openFolders = new Set(openFoldersFromStore);
-    } else {
-      await window.electronStore.delete('openFolders');
+      if (rootFolder && rootFolder == first) {
+        openFolders = new Set(openFoldersFromStore);
+      } else {
+        await window.electronStore.delete('openFolders');
+      }
     }
+  } else {
+    return;
   }
 }
 
@@ -665,6 +670,9 @@ document.addEventListener('refreshFileTree', async () => {
 });
 
 window.addEventListener('beforeunload', async () => {
-  await window.electronStore.set('openFolders', Array.from(openFolders));
+  let openFoldersConditionSave = await window.electronStore.get('openFoldersConditionSave');
+  if (openFoldersConditionSave) {
+    await window.electronStore.set('openFolders', Array.from(openFolders));
+  }
 });
 
