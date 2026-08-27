@@ -104,3 +104,10 @@ depthInput.addEventListener('change', async (e) => {
 openFoldersConditionInput.addEventListener('change', async (e) => {
   await window.electronStore.set('openFoldersConditionSave', e.target.checked);
 })
+
+settingsContainer.addEventListener('click', (e) => {
+  if (e.target === settingsContainer) {
+    toggleVisibilityElement(settingsContainer);
+    toggleOverflowXElement(body);
+  }
+});
