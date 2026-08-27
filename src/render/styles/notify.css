@@ -1,15 +1,15 @@
 .notify-container {
-  position: sticky;
+  position: fixed;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   align-items: flex-end;
   justify-content: flex-end;
   max-width: 420px;
   width: 100%;
-  left: 80%;
-  top: 80%;
+  bottom: 30px;
+  right: 30px;
   margin-right: 35px;
-  max-height: 240px;
+  max-height: 1240px;
 }
 
 .notify-item {

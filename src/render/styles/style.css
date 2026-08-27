@@ -16,6 +16,7 @@
 }
 
 .side-bar-container {
+  width: 300px;
   max-height: 1440px;
   background-color: #e7e7e76e;
   position: fixed;
@@ -101,7 +102,7 @@
   background-color: white;
   display: flex;
   justify-content: center;
-  margin-left: 454px;
+  padding-left: 150px;
 }
 
 .tree-root {
@@ -231,4 +232,11 @@
 .icon {
   cursor: pointer;
   user-select: none;
+}
+
+
+@media (max-width: 1431px) {
+  .main-place {
+    padding-left: 300px;
+  }
 }
