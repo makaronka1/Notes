@@ -4,6 +4,12 @@
   border: 0;
 }
 
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none; /* Chrome/Safari/Edge */
+}
+
 .container {
   display: flex;
   flex-direction: row;
@@ -13,6 +19,8 @@
   position: relative;
   min-height: 100vh;
   font-size: 18px;
+  overflow-x: hidden;
+  min-width: 1131px;
 }
 
 .side-bar-container {
@@ -22,11 +30,19 @@
   position: fixed;
   display: flex;
   flex-direction: column;
+  border-right: 1px solid #d5d5d56e;
 }
 
 .side-bar {
-  height: 100vh;
+  height: calc(100vh - 36px);
   width: 300px;
+  overflow-y: auto;
+}
+
+.side-bar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none; /* Chrome/Safari/Edge */
 }
 
 /* Выделение только того узла, на который навели */
@@ -60,11 +76,11 @@
 
 /* Цвет текста при наведении на узел */
 .side-bar .tree-node:hover > .file-item {
-  color: #1a73e8;
+  /* color: #1a73e8; */
 }
 
 .side-bar .tree-node:hover > .directory-item {
-  color: #d35400;
+  /* color: #d35400; */
 }
 
 /* Отключаем hover на span (чтобы не было двойного выделения) */
@@ -74,11 +90,12 @@
 }
 
 .navbar {
-  height: 36px;
+  height: 30px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid #d5d5d56e;
 }
 
 .navbar-list {
@@ -96,14 +113,71 @@
   cursor: pointer;
 }
 
-.main-place {
+.main-place-container {
   flex: 1;
   height: 100%;
   background-color: white;
   display: flex;
   justify-content: center;
-  padding-left: 150px;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 1131px;
+  gap: 10px;
 }
+
+.main-place {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  min-width: 830px;
+}
+
+.open-files-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: 300px;
+  height: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  width: calc(100% - 300px);
+  flex-shrink: 0;
+  white-space: nowrap;
+  background-color: #e7e7e76e;
+  border-bottom: 1px solid #d5d5d56e;
+}
+
+.open-files-container::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.open-files-element {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  min-width: 200px;
+  height: 100%;
+  border-right: 1px solid #d5d5d56e;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.open-files-element:hover {
+  background-color: #e8e8e8;
+}
+
+.open-files-element > span {
+  color: #333333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 10px;
+}
+
 
 .tree-root {
   list-style: none;
@@ -141,15 +215,13 @@
   opacity: 1;
 }
 
-/* Стили для просмотрщика файлов */
 .file-viewer {
   padding: 20px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 35%;
-  min-width: 790px;
-  min-height: 95vh;
+  width: 790px;
+  min-height: 90vh;
 }
 
 
@@ -183,16 +255,20 @@
 }
 
 .file-item {
-  color : #343434;
+  color : #333333;
   max-width: 90%;
   overflow:  hidden;
   padding: 4px 0px;
   user-select: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .directory-item {
-  color : #343434;
+  color : #333333;
   user-select: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .error-message {
@@ -234,9 +310,46 @@
   user-select: none;
 }
 
+.close-icon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
 
-@media (max-width: 1431px) {
+.close-icon::before,
+.close-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 2px;
+    background-color: #333333;
+    border-radius: 2px;
+}
+
+.close-icon::before {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.close-icon::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.close-icon:hover::before,
+.close-icon:hover::after {
+  background-color: #e74c3c; /* Красный при наведении */
+}
+
+
+.open-files-element > span.close-icon {
+  padding: 0 10px 0 0;
+}
+
+@media (max-width: 1445px) {
   .main-place {
-    padding-left: 300px;
+    width: calc(100% - 300px);
+    min-width: 830px;
   }
 }

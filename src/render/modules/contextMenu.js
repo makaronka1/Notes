@@ -252,7 +252,7 @@ async function renameEvent(input, oldPath, extension = false) {
       }
 
       createNotify(`✅ Файл переименован`, 'success', 10000);
-      updateTreeNode(oldPath, newObjectName, inputValue);
+      triggerTreeRefresh();
       return { success: true };
     }
 

@@ -1,6 +1,7 @@
 let btn = document.querySelector('#btn');
 let sendBtn = document.querySelector('#sendBtn');
 let sideBar = document.querySelector('.side-bar');
+const openFilesContainer = document.querySelector('.open-files-container')
 let selectedFolderPath = null;
 let openFolders = new Set();
 
@@ -169,6 +170,7 @@ function createTreeNode(item, isRoot = false) {
     span._clickHandler = clickHandler;
     span.addEventListener('click', clickHandler);
     li.appendChild(span);
+    span.addEventListener('click',  (e) => {addToOpenFiles(openFilesContainer, e.target)});
   }
   
   // Обработчик для папок
