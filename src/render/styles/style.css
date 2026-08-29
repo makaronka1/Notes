@@ -256,9 +256,9 @@ body::-webkit-scrollbar {
 
 .file-item {
   color : #333333;
-  max-width: 90%;
   overflow:  hidden;
   padding: 4px 0px;
+  padding-right: 15px;
   user-select: none;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -293,7 +293,7 @@ body::-webkit-scrollbar {
 }
 
 .input-rename {
-  width: 98%;
+  width: calc(100% - 15px);
   height: 20px;
   font-size: 18px;
   font-family: "Ubuntu", Tahoma, "Helvetica Neue", Helvetica, Arial, sans-serif;

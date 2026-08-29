@@ -4,6 +4,7 @@ let sideBar = document.querySelector('.side-bar');
 const openFilesContainer = document.querySelector('.open-files-container')
 let selectedFolderPath = null;
 let openFolders = new Set();
+let openFiles = new Set();
 
 async function fillOpenFolders () {
   let openFoldersConditionSave = await window.electronStore.get('openFoldersConditionSave');
@@ -163,14 +164,33 @@ function createTreeNode(item, isRoot = false) {
   // Обработчик для файлов
   if (item.type === 'file') {
     span.style.cursor = 'pointer';
-    const clickHandler = async () => {
-      console.log('Выбран файл:', item.path);
-      await openFileInMainPlace(item.path);
+    let clickTimer = null;
+    const handleFileClick = async (e) => {
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        
+        console.log('🔄 Двойной клик (постоянный):', item.path);
+        await openFileInMainPlace(item.path);
+
+        addToOpenFiles(openFilesContainer, e.target, 'constant');
+        return;
+      }
+      
+      clickTimer = setTimeout(async () => {
+        clickTimer = null;
+        
+        console.log('📄 Одинарный клик (временный):', item.path);
+        await openFileInMainPlace(item.path);
+
+        addToOpenFiles(openFilesContainer, e.target, 'temporary');
+        
+      }, 200);
     };
-    span._clickHandler = clickHandler;
-    span.addEventListener('click', clickHandler);
+    span._clickHandler = handleFileClick;
+    span.addEventListener('click', handleFileClick);
+
     li.appendChild(span);
-    span.addEventListener('click',  (e) => {addToOpenFiles(openFilesContainer, e.target)});
   }
   
   // Обработчик для папок
