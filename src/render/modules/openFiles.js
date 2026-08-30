@@ -2,11 +2,13 @@ function addToOpenFiles (openFilesContainer, targetElement, className = null) {
   const dataPath = targetElement.getAttribute('data-path');
   console.log(openFiles);
   if (openFiles.has(dataPath)) {
-    focusOnOpenElement(openFilesContainer, dataPath);
+    const openFilesElement = openFilesContainer.querySelector(`[data-path="${CSS.escape(dataPath)}"]`);
+    focusOnOpenElement(openFilesElement);
+    highlightOpenFilesElement(openFilesContainer, openFilesElement);
     return;
   }
   
-  const openFilesElement = createOpenFilesElement(targetElement, dataPath, className);
+  const newOpenFilesElement = createOpenFilesElement(targetElement, dataPath, className);
 
   const lastElement = openFilesContainer.children[openFilesContainer.children.length - 1];
 
@@ -17,8 +19,10 @@ function addToOpenFiles (openFilesContainer, targetElement, className = null) {
   }
 
   openFiles.add(dataPath);
-  openFilesContainer.appendChild(openFilesElement);
-  focusOnOpenElement(openFilesContainer, dataPath);
+  openFilesContainer.appendChild(newOpenFilesElement);
+  
+  highlightOpenFilesElement(openFilesContainer, newOpenFilesElement);
+  focusOnOpenElement(newOpenFilesElement);
 }
 
 function removeFromOpenFiles (e) {
@@ -30,10 +34,9 @@ function removeFromOpenFiles (e) {
   openFiles.delete(dataPath);
 }
 
-function focusOnOpenElement (container, dataPath) {
-  const openFilesElement = container.querySelector(`[data-path="${CSS.escape(dataPath)}"]`);
-  openFilesElement.focus();
-  openFilesElement.scrollIntoView({
+function focusOnOpenElement (element) {
+  element.focus();
+  element.scrollIntoView({
     behavior: 'smooth',
     block: 'center'
   });
@@ -57,5 +60,19 @@ function createOpenFilesElement (targetElement, dataPath, className = null) {
   closeIcon.addEventListener('click', (e) => removeFromOpenFiles(e));
   openFilesElement.appendChild(closeIcon);
 
+  openFilesElement.addEventListener('click', () => {
+    highlightOpenFilesElement(openFilesContainer, openFilesElement);
+  })
+
   return openFilesElement;
+}
+
+function highlightOpenFilesElement (openFilesContainer, element) {
+  const otherActiveElement = openFilesContainer.querySelector('.active');
+
+  if (otherActiveElement) {
+    otherActiveElement.classList.remove('active');
+  }
+
+  element.classList.add('active');
 }

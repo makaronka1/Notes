@@ -2,6 +2,7 @@
   padding: 0;
   margin: 0;
   border: 0;
+  box-sizing: border-box;
 }
 
 body::-webkit-scrollbar {
@@ -30,7 +31,7 @@ body::-webkit-scrollbar {
   position: fixed;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #d5d5d56e;
+  border-right: 1px solid #d5d5d5;
 }
 
 .side-bar {
@@ -74,15 +75,6 @@ body::-webkit-scrollbar {
   transition: color 0.15s ease;
 }
 
-/* Цвет текста при наведении на узел */
-.side-bar .tree-node:hover > .file-item {
-  /* color: #1a73e8; */
-}
-
-.side-bar .tree-node:hover > .directory-item {
-  /* color: #d35400; */
-}
-
 /* Отключаем hover на span (чтобы не было двойного выделения) */
 .side-bar .file-item:hover,
 .side-bar .directory-item:hover {
@@ -90,12 +82,13 @@ body::-webkit-scrollbar {
 }
 
 .navbar {
-  height: 30px;
+  height: 33px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #d5d5d56e;
+  border-bottom: 1px solid #d5d5d5;
+  border-top: 1px solid #d5d5d5;
 }
 
 .navbar-list {
@@ -122,7 +115,7 @@ body::-webkit-scrollbar {
   flex-direction: column;
   align-items: flex-end;
   min-width: 1131px;
-  gap: 10px;
+  gap: 15px;
 }
 
 .main-place {
@@ -132,26 +125,36 @@ body::-webkit-scrollbar {
   min-width: 830px;
 }
 
-.open-files-container {
+.open-files-wrapper {
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  margin-left: 300px;
-  height: 30px;
   overflow-x: auto;
   overflow-y: hidden;
+  flex: 1;
+  margin-left: 300px;
   width: calc(100% - 300px);
-  flex-shrink: 0;
-  white-space: nowrap;
-  background-color: #e7e7e76e;
-  border-bottom: 1px solid #d5d5d56e;
+  flex-wrap: nowrap;
 }
 
-.open-files-container::-webkit-scrollbar {
+.open-files-wrapper::-webkit-scrollbar {
   width: 0;
   height: 0;
   display: none;
+}
+
+.open-files-container {
+  position: relative;
+  display: flex;
+  min-width: 100%;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  height: 33px;
+  white-space: nowrap;
+  background-color: #e7e7e76e;
+  border-bottom: 1px solid #d5d5d5;
+  border-top: 1px solid #d5d5d5;
+  width: auto;
+  flex-shrink: 0;
 }
 
 .open-files-element {
@@ -160,11 +163,33 @@ body::-webkit-scrollbar {
   justify-content: space-between;
   width: 200px;
   min-width: 200px;
-  height: 100%;
-  border-right: 1px solid #d5d5d56e;
+  height: 32px;
+  border-right: 1px solid #d5d5d5;
   flex-shrink: 0;
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.open-files-element.active {
+  background-color: white;
+  z-index: 2;
+  position: relative;
+}
+
+.open-files-element:focus {
+  outline: none;
+}
+
+.open-files-element.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: white;
+  z-index: 3;
 }
 
 .open-files-element:hover {
@@ -344,12 +369,12 @@ body::-webkit-scrollbar {
 
 
 .open-files-element > span.close-icon {
-  padding: 0 10px 0 0;
+  padding: 0 30px 0 0;
 }
 
 @media (max-width: 1445px) {
   .main-place {
-    width: calc(100% - 300px);
+    width: calc(100% - 270px);
     min-width: 830px;
   }
 }
