@@ -179,6 +179,7 @@ body::-webkit-scrollbar {
   background-color: white;
   z-index: 2;
   position: relative;
+  width: auto;
 }
 
 .open-files-element:focus {
@@ -206,6 +207,16 @@ body::-webkit-scrollbar {
   text-overflow: ellipsis;
   padding-left: 10px;
 }
+
+.open-files-element.active > span {
+  text-overflow: clip;
+}
+
+.open-files-element.temporary > span {
+  font-style: italic;
+}
+
+
 
 
 .tree-root {
