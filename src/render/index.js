@@ -289,7 +289,6 @@ function toggleFolderState(e, span, childUl, item) {
 
 // Функция открытия файла в главной области
 async function openFileInMainPlace(filePath) {
-  const mainPlace = document.querySelector('.main-place');
   
   // Убеждаемся, что путь абсолютный
   let absolutePath = filePath;
@@ -299,6 +298,19 @@ async function openFileInMainPlace(filePath) {
       absolutePath = window.path.join(currentDir, filePath);
     }
   }
+
+  const currentFileViewer = document.querySelector('.file-viewer');
+
+  if (currentFileViewer) {
+    const dataPath = currentFileViewer.getAttribute('data-path');
+
+    if (dataPath == absolutePath) {
+      console.log('FileViewer уже открыт');
+      return;
+    }
+  }
+
+  const mainPlace = document.querySelector('.main-place');
   
   // Определяем тип файла по расширению
   const fileExtension = absolutePath.split('.').pop().toLowerCase();
