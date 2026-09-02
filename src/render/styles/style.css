@@ -21,7 +21,6 @@ body::-webkit-scrollbar {
   min-height: 100vh;
   font-size: 18px;
   overflow-x: hidden;
-  min-width: 1131px;
 }
 
 .side-bar-container {
@@ -32,11 +31,13 @@ body::-webkit-scrollbar {
   display: flex;
   flex-direction: column;
   border-right: 1px solid #d5d5d5;
+  flex-shrink: 0;
 }
 
 .side-bar {
   height: calc(100vh - 36px);
   width: 300px;
+  flex-shrink: 0;
   overflow-y: auto;
 }
 
@@ -113,16 +114,20 @@ body::-webkit-scrollbar {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  align-items: flex-end;
-  min-width: 1131px;
+  align-items: center;
+  margin-left: 300px;
+  width: calc(100% - 300px);
   gap: 15px;
+  overflow: hidden;
 }
 
 .main-place {
   width: 100%;
   display: flex;
   justify-content: center;
-  min-width: 830px;
+  overflow: hidden; /* ✅ Добавляем */
+  flex: 1;
+  padding: 10px;
 }
 
 .open-files-wrapper {
@@ -130,8 +135,7 @@ body::-webkit-scrollbar {
   overflow-x: auto;
   overflow-y: hidden;
   flex: 1;
-  margin-left: 300px;
-  width: calc(100% - 300px);
+  width: 100%;
   flex-wrap: nowrap;
 }
 
@@ -372,9 +376,9 @@ body::-webkit-scrollbar {
   padding: 0 30px 0 0;
 }
 
-@media (max-width: 1445px) {
+/* @media (max-width: 1445px) {
   .main-place {
     width: calc(100% - 270px);
     min-width: 830px;
   }
-}
+} */
