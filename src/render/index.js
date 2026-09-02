@@ -71,7 +71,7 @@ async function getAllFilesFromFileSystem(path = null, depth = 0) {
     children.push(node);
   }
   
-  const folderName = folder.split('\\').pop();
+  const folderName = window.path.basename(folder);
   return {
     name: folderName,
     type: 'directory',
@@ -293,10 +293,10 @@ async function openFileInMainPlace(filePath) {
   
   // Убеждаемся, что путь абсолютный
   let absolutePath = filePath;
-  if (!filePath.includes(':\\') && !filePath.startsWith('/') && !filePath.includes(':/')) {
+  if (!window.path.isAbsolute(filePath)) {
     const currentDir = await getField('folder');
     if (currentDir) {
-      absolutePath = `${currentDir}\\${filePath}`;
+      absolutePath = window.path.join(currentDir, filePath);
     }
   }
   
@@ -520,7 +520,7 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
   const lastSlash = state.currentFilePath.lastIndexOf('/');
   const lastSeparator = lastBackslash > lastSlash ? lastBackslash : lastSlash;
   
-  let directory = state.currentFilePath.substring(0, lastSeparator);
+  let directory = window.path.dirname(state.currentFilePath);
   
   // Проверка: если directory пустой, используем сохранённую папку
   if (!directory || directory === state.currentFilePath) {
@@ -534,7 +534,7 @@ async function renameFileWithState(state, newNameWithoutExt, titleInput) {
   
   // Формируем новое полное имя файла
   const newFullName = state.currentFileExtension ? `${newNameWithoutExt}.${state.currentFileExtension}` : newNameWithoutExt;
-  const newFilePath = `${directory}\\${newFullName}`;
+  const newFilePath = window.path.join(directory, newFullName);
   
   // Проверка: не пытаемся ли переименовать в тот же файл
   if (newFilePath === state.currentFilePath) {
@@ -573,7 +573,7 @@ async function updateTreeNode(oldPath, newPath = null, newName = null) {
   
   const targetPath = newPath || oldPath;
   const targetName = newName || getDisplayName({ 
-    name: targetPath.split('\\').pop().split('/').pop(), 
+    name: window.path.basename(targetPath), 
     type: 'file' 
   });
   

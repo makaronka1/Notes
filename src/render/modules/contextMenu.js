@@ -100,7 +100,7 @@ async function deleteElement (targetElement) {
 // Функция создания локальной папки (через IPC)
 async function createLocalDirectory(targetElement = false) {
   if (targetElement) {
-    let path = targetElement.getAttribute('data-path') + '\/Новая папка';
+    let path = window.path.join(targetElement.getAttribute('data-path'), 'Новая папка');
     console.log(path);
     try {
       const result = await window.electronAPI.createDirectory(path);
@@ -114,7 +114,7 @@ async function createLocalDirectory(targetElement = false) {
   } else {
     const mainFolderPath = await getField('folder');
     try {
-      const result = await window.electronAPI.createDirectory(mainFolderPath + '\/Новая папка');
+      const result = await window.electronAPI.createDirectory(window.path.join(mainFolderPath, 'Новая папка'));
       triggerTreeRefresh();
       return result.success;
     } catch (error) {
@@ -127,7 +127,7 @@ async function createLocalDirectory(targetElement = false) {
 
 async function createFile(targetElement = false, fileExtension = '.md') {
   if (targetElement) {
-    let path = targetElement.getAttribute('data-path') + '\/Новый файл';
+    let path = window.path.join(targetElement.getAttribute('data-path'), 'Новый файл');
     try {
       const result = await window.electronAPI.createFile(path, fileExtension);
       triggerTreeRefresh();
@@ -139,7 +139,7 @@ async function createFile(targetElement = false, fileExtension = '.md') {
   } else {
     const mainFolderPath = await getField('folder');
     try {
-      const result = await window.electronAPI.createFile(mainFolderPath + '\/Новый файл', fileExtension);
+      const result = await window.electronAPI.createFile(window.path.join(mainFolderPath, 'Новый файл'), fileExtension);
       triggerTreeRefresh();
       return result.success;
     } catch (error) {
@@ -228,11 +228,12 @@ async function renameEvent(input, oldPath, extension = false) {
   }
 
   const newPath = oldPath.slice(0, oldPath.lastIndexOf('\\') + 1);
+  const directory = window.path.dirname(oldPath);
   let newObjectName;
   if (extension) {
-    newObjectName = newPath + inputValue + extension;
+    newObjectName = window.path.join(directory, inputValue + extension);
   } else {
-    newObjectName = newPath + inputValue;
+    newObjectName = window.path.join(directory, inputValue);
   }
 
   const renameResult = await window.fileSystem.renameObject(oldPath, newObjectName);

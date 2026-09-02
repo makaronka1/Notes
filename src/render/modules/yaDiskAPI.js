@@ -185,7 +185,7 @@ async function downloadFileFromCloud(cloudFilePath, localSavePath = null) {
     if (!localSavePath) {
       const fileName = cloudFilePath.split('/').pop();
       const downloadsFolder = await getField('downloadsFolder') || './downloads';
-      localSavePath = `${downloadsFolder}/${fileName}`;
+      localSavePath = window.path.join(downloadsFolder, fileName);
     }
     
     // 3. Скачиваем и сохраняем файл
@@ -225,7 +225,7 @@ async function downloadAllFilesFromCloud(cloudPath = '/Приложения/Note
   };
   
   for (const item of items) {
-    const localItemPath = `${localBasePath}/${item.name}`;
+    const localItemPath = window.path.join(localBasePath, item.name);
     
     if (item.isFile) {
       console.log(`📥 Скачиваем файл: ${item.name}`);
