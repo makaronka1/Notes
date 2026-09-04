@@ -98,7 +98,7 @@ async function handleSelectFolder() {
 async function renderFileTree() {
   const tree = await getAllFilesFromFileSystem();
   const sideBar = document.querySelector('.side-bar');
-  
+
   sideBar.innerHTML = '';
   
   const rootNode = createTreeNode(tree);
@@ -675,6 +675,66 @@ function findNodeByPath(element, targetPath) {
   
   console.log('❌ Узел не найден');
   return null;
+}
+
+function updateElementsState (objectType, dataPath, newDataPath = null) {
+  const viewerElements = document.querySelectorAll('.file-viewer');
+  const openFilesElements = document.querySelectorAll('.open-files-element');
+  const treeElements = document.querySelectorAll('.file-item');
+
+  if (objectType == 'folder') {
+    if (dataPath && newDataPath) {
+      for (let element of viewerElements) {
+        const path = element.getAttribute('data-path');
+        //Заменить логику проверки 
+        if (path && path.includes(dataPath)) {
+          let newPath = path.replace(dataPath, newDataPath);
+          element.setAttribute('data-path', newPath);
+        }
+      }
+
+      for (let file of openFilesElements) {
+        const path = file.getAttribute('data-path');
+        //Заменить логику проверки 
+        if (path && path.includes(dataPath)) {
+          let newPath = path.replace(dataPath, newDataPath);
+          file.setAttribute('data-path', newPath);
+          openFiles.delete(path);
+          openFiles.add(newPath);
+        }
+      }
+
+      if (openFolders.has(dataPath)) {
+        openFolders.delete(dataPath);
+        openFolders.add(newDataPath);
+      }
+    } else if (dataPath && !newDataPath) {
+        for (let element of viewerElements) {
+          const path = element.getAttribute('data-path');
+          //Заменить логику проверки 
+          if (path && path.includes(dataPath)) {
+            element.remove();
+          }
+        }
+
+        for (let file of openFilesElements) {
+          const path = file.getAttribute('data-path');
+          //Заменить логику проверки 
+          if (path && path.includes(dataPath)) {
+            file.remove();
+            openFiles.delete(path);
+          }
+        }
+        //Заменить логику проверки 
+        const folders = [...openFolders].filter(folder => folder.includes(dataPath));
+        for (let folder of folders) {
+          openFolders.delete(folder);
+        }
+    }
+    
+  } else {
+
+  }
 }
 
 

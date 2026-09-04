@@ -76,20 +76,12 @@ function createContextMenu(x, y, targetElement) {
 
 async function deleteElement (targetElement) {
   let path = targetElement.getAttribute('data-path');
-  const fileViewer = document.querySelector('.file-viewer');
-  let fileViewerPath;
-  if (fileViewer) {
-    fileViewerPath = fileViewer.getAttribute('data-path');
-  }
-
-  console.log(path);
+  const objectType = targetElement.classList.contains('directory-item') ? 'folder' : 'file';
   const deleteResult =  await window.fileSystem.deleteElement(path);
 
-  if (fileViewerPath && fileViewerPath == path) {
-    fileViewer.remove();
-  }
 
   if(deleteResult.success) {
+    updateElementsState(objectType, path);
     createNotify(`✅ Элемент Удалён`, 'success', 10000);
     triggerTreeRefresh();
   } else {
@@ -255,23 +247,19 @@ async function renameEvent(input, oldPath, extension = false) {
       createNotify(`✅ Файл переименован`, 'success', 10000);
       triggerTreeRefresh();
       return { success: true };
-    }
-
-    createNotify(`✅ Папка переименована`, 'success', 10000);
-    if (openFolders.has(oldPath)) {
-      openFolders.delete(oldPath);
-      openFolders.add(newObjectName);
-    }
-
-    if (fileViewerPath) {
-      if (fileViewerPath.includes(oldPath)) {
-        let newFileViewerPath = fileViewerPath.replace(oldPath, newObjectName);
-        await openFileInMainPlace(newFileViewerPath);
+    } else {
+      createNotify(`✅ Папка переименована`, 'success', 10000);
+      updateElementsState('folder', oldPath, newObjectName);
+      if (openFolders.has(oldPath)) {
+        openFolders.delete(oldPath);
+        openFolders.add(newObjectName);
       }
+
+      triggerTreeRefresh();
+      return { success: true };
     }
 
-    triggerTreeRefresh();
-    return { success: true };
+    
     
   } else {
     createNotify(`❌ Ошибка переименования: ${renameResult.error}`, 'danger', 10000);
