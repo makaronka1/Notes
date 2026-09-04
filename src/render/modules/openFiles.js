@@ -60,9 +60,11 @@ function createOpenFilesElement (targetElement, dataPath, className = null) {
   closeIcon.addEventListener('click', (e) => removeFromOpenFiles(e));
   openFilesElement.appendChild(closeIcon);
 
-  openFilesElement.addEventListener('click', async () => {
+  openFilesElement.addEventListener('click', async (e) => {
     highlightOpenFilesElement(openFilesContainer, openFilesElement);
-    await openFileInMainPlace(dataPath);
+
+    const path = e.target.closest('.open-files-element').getAttribute('data-path'); 
+    await openFileInMainPlace(path);
   })
 
   return openFilesElement;
