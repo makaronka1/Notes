@@ -338,7 +338,7 @@ async function openFileInMainPlace(filePath) {
       clearTimeout(state.saveTimeout);
     }
     
-    const newValue = e.target.value.trim();
+    const newValue = e.target.value.trim().toLowerCase();
     
     state.saveTimeout = setTimeout(async () => {
       // ✅ Используем объединённую функцию
@@ -735,6 +735,13 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
   } else {
 
   }
+}
+
+function normalizePath(filePath) {
+  if (!filePath) return '';
+  let normalized = filePath.replace(/\\/g, '/');
+  
+  return normalized;
 }
 
 

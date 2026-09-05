@@ -92,7 +92,7 @@ async function deleteElement (targetElement) {
 // Функция создания локальной папки (через IPC)
 async function createLocalDirectory(targetElement = false) {
   if (targetElement) {
-    let path = window.path.join(targetElement.getAttribute('data-path'), 'Новая папка');
+    let path = window.path.join(targetElement.getAttribute('data-path'), 'новая папка');
     console.log(path);
     try {
       const result = await window.electronAPI.createDirectory(path);
@@ -106,7 +106,7 @@ async function createLocalDirectory(targetElement = false) {
   } else {
     const mainFolderPath = await getField('folder');
     try {
-      const result = await window.electronAPI.createDirectory(window.path.join(mainFolderPath, 'Новая папка'));
+      const result = await window.electronAPI.createDirectory(window.path.join(mainFolderPath, 'новая папка'));
       triggerTreeRefresh();
       return result.success;
     } catch (error) {
@@ -119,7 +119,7 @@ async function createLocalDirectory(targetElement = false) {
 
 async function createFile(targetElement = false, fileExtension = '.md') {
   if (targetElement) {
-    let path = window.path.join(targetElement.getAttribute('data-path'), 'Новый файл');
+    let path = window.path.join(targetElement.getAttribute('data-path'), 'новый файл');
     try {
       const result = await window.electronAPI.createFile(path, fileExtension);
       triggerTreeRefresh();
@@ -131,7 +131,7 @@ async function createFile(targetElement = false, fileExtension = '.md') {
   } else {
     const mainFolderPath = await getField('folder');
     try {
-      const result = await window.electronAPI.createFile(window.path.join(mainFolderPath, 'Новый файл'), fileExtension);
+      const result = await window.electronAPI.createFile(window.path.join(mainFolderPath, 'новый файл'), fileExtension);
       triggerTreeRefresh();
       return result.success;
     } catch (error) {
@@ -204,14 +204,14 @@ function createInputForRename (content = false) {
   input.type = 'text';
   input.className = 'input-rename';
   if (content) {
-    input.value = content;
+    input.value = content.trim().toLowerCase();
   }
 
   return input;
 }
 
 async function renameEvent(input, oldPath, extension = false) {
-  const inputValue = input.value;
+  const inputValue = input.value.toLowerCase().trim();
 
   if (inputValue == '') {
     createNotify(`❌ Ошибка переименования: название не может быть пустой строкой`, 'danger', 5000);
@@ -219,7 +219,6 @@ async function renameEvent(input, oldPath, extension = false) {
     return;
   }
 
-  const newPath = oldPath.slice(0, oldPath.lastIndexOf('\\') + 1);
   const directory = window.path.dirname(oldPath);
   let newObjectName;
   if (extension) {
