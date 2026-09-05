@@ -44,4 +44,11 @@ contextBridge.exposeInMainWorld('path', {
   resolve: (...args) => path.resolve(...args)
 });
 
+contextBridge.exposeInMainWorld('osInfo', {
+  platform: process.platform,
+  isWindows: process.platform === 'win32',
+  isLinux: process.platform === 'linux',
+  isMac: process.platform === 'darwin'
+});
+
 console.log('✅ Preload script loaded successfully');

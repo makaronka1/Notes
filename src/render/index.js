@@ -5,6 +5,7 @@ const openFilesContainer = document.querySelector('.open-files-container')
 let selectedFolderPath = null;
 let openFolders = new Set();
 let openFiles = new Set();
+const isWindows = window.osInfo.isWindows;
 
 async function fillOpenFolders () {
   let openFoldersConditionSave = await window.electronStore.get('openFoldersConditionSave');
@@ -687,7 +688,7 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
       for (let element of viewerElements) {
         const path = element.getAttribute('data-path');
         //Заменить логику проверки 
-        if (path && path.includes(dataPath)) {
+        if (isPathInside(dataPath, path)) {
           let newPath = path.replace(dataPath, newDataPath);
           element.setAttribute('data-path', newPath);
         }
@@ -696,7 +697,7 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
       for (let file of openFilesElements) {
         const path = file.getAttribute('data-path');
         //Заменить логику проверки 
-        if (path && path.includes(dataPath)) {
+        if (isPathInside(dataPath, path)) {
           let newPath = path.replace(dataPath, newDataPath);
           file.setAttribute('data-path', newPath);
           openFiles.delete(path);
@@ -704,15 +705,18 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
         }
       }
 
-      if (openFolders.has(dataPath)) {
-        openFolders.delete(dataPath);
-        openFolders.add(newDataPath);
+      const folders = [...openFolders].filter(folder => isPathInside(dataPath, folder));
+      for (let folder of folders) {
+        let newPath = folder.replace(dataPath, newDataPath);
+        openFolders.delete(folder);
+        openFolders.add(newPath);
       }
+      
     } else if (dataPath && !newDataPath) {
         for (let element of viewerElements) {
           const path = element.getAttribute('data-path');
           //Заменить логику проверки 
-          if (path && path.includes(dataPath)) {
+          if (isPathInside(dataPath, path)) {
             element.remove();
           }
         }
@@ -720,13 +724,13 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
         for (let file of openFilesElements) {
           const path = file.getAttribute('data-path');
           //Заменить логику проверки 
-          if (path && path.includes(dataPath)) {
+          if (isPathInside(dataPath, path)) {
             file.remove();
             openFiles.delete(path);
           }
         }
         //Заменить логику проверки 
-        const folders = [...openFolders].filter(folder => folder.includes(dataPath));
+        const folders = [...openFolders].filter(folder => isPathInside(dataPath, folder));
         for (let folder of folders) {
           openFolders.delete(folder);
         }
@@ -737,11 +741,25 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
   }
 }
 
-function normalizePath(filePath) {
-  if (!filePath) return '';
-  let normalized = filePath.replace(/\\/g, '/');
-  
-  return normalized;
+function isPathInside (mainPath, childPath) {
+  if (isWindows) {
+    mainPath = mainPath.split('\\');
+    childPath = childPath.split('\\');
+  } else {
+    mainPath = mainPath.split('/');
+    childPath = childPath.split('/');
+  }
+
+  if (childPath.length < mainPath.length) return false;
+
+  for (let i = 0; i < mainPath.length; i++) {
+    if (mainPath[i] != childPath[i]) {
+      console.log(mainPath[i], childPath[i]);
+      return false;
+    }
+  }
+
+  return true;
 }
 
 
