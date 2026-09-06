@@ -231,29 +231,15 @@ async function renameEvent(input, oldPath, extension = false) {
 
 
   if (renameResult.success) {
-    const fileViewer = document.querySelector('.file-viewer');
-    let fileViewerPath = null;
-
-    if (fileViewer) {
-      fileViewerPath = fileViewer.getAttribute('data-path')
-    }
 
     if (extension) {
-      if (fileViewerPath && fileViewerPath == oldPath) {
-        await openFileInMainPlace(newObjectName);
-      }
-
+      updateElementsState('file', oldPath, newObjectName);
       createNotify(`✅ Файл переименован`, 'success', 10000);
       triggerTreeRefresh();
       return { success: true };
     } else {
       createNotify(`✅ Папка переименована`, 'success', 10000);
       updateElementsState('folder', oldPath, newObjectName);
-      if (openFolders.has(oldPath)) {
-        openFolders.delete(oldPath);
-        openFolders.add(newObjectName);
-      }
-
       triggerTreeRefresh();
       return { success: true };
     }

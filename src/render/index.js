@@ -678,25 +678,24 @@ function findNodeByPath(element, targetPath) {
   return null;
 }
 
-function updateElementsState (objectType, dataPath, newDataPath = null) {
+async function updateElementsState (objectType, dataPath, newDataPath = null) {
   const viewerElements = document.querySelectorAll('.file-viewer');
   const openFilesElements = document.querySelectorAll('.open-files-element');
-  const treeElements = document.querySelectorAll('.file-item');
 
   if (objectType == 'folder') {
     if (dataPath && newDataPath) {
       for (let element of viewerElements) {
         const path = element.getAttribute('data-path');
-        //Заменить логику проверки 
+
         if (isPathInside(dataPath, path)) {
           let newPath = path.replace(dataPath, newDataPath);
-          element.setAttribute('data-path', newPath);
+          await openFileInMainPlace(newPath);
         }
       }
 
       for (let file of openFilesElements) {
         const path = file.getAttribute('data-path');
-        //Заменить логику проверки 
+
         if (isPathInside(dataPath, path)) {
           let newPath = path.replace(dataPath, newDataPath);
           file.setAttribute('data-path', newPath);
@@ -715,7 +714,7 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
     } else if (dataPath && !newDataPath) {
         for (let element of viewerElements) {
           const path = element.getAttribute('data-path');
-          //Заменить логику проверки 
+
           if (isPathInside(dataPath, path)) {
             element.remove();
           }
@@ -723,13 +722,13 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
 
         for (let file of openFilesElements) {
           const path = file.getAttribute('data-path');
-          //Заменить логику проверки 
+
           if (isPathInside(dataPath, path)) {
             file.remove();
             openFiles.delete(path);
           }
         }
-        //Заменить логику проверки 
+
         const folders = [...openFolders].filter(folder => isPathInside(dataPath, folder));
         for (let folder of folders) {
           openFolders.delete(folder);
@@ -737,8 +736,50 @@ function updateElementsState (objectType, dataPath, newDataPath = null) {
     }
     
   } else {
+    if (dataPath && newDataPath)  {
+      for (let element of viewerElements) {
+        const path = element.getAttribute('data-path');
 
+        if (path == dataPath) {
+          await openFileInMainPlace(newDataPath);
+        }
+      }
+
+      for (let file of openFilesElements) {
+        const path = file.getAttribute('data-path');
+
+        if (path == dataPath) {
+          file.setAttribute('data-path', newDataPath);
+          const newName = getFileNameWithoutExtension(newDataPath);
+          file.children[0].textContent = newName;
+          openFiles.delete(path);
+          openFiles.add(newDataPath);
+        }
+      }
+    } else if (dataPath && !newDataPath) {
+      for (let element of viewerElements) {
+        const path = element.getAttribute('data-path');
+
+        if (path == dataPath) {
+          element.remove();
+        }
+      }
+
+      for (let file of openFilesElements) {
+        const path = file.getAttribute('data-path');
+
+        if (path == dataPath) {
+          file.remove();
+          openFiles.delete(path);
+        }
+      }
+    }
   }
+}
+
+function getFileNameWithoutExtension(filePath) {
+  const parsed = window.path.parse(filePath);
+  return parsed.name;
 }
 
 function isPathInside (mainPath, childPath) {

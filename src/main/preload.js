@@ -37,6 +37,7 @@ contextBridge.exposeInMainWorld('path', {
   basename: (p) => path.basename(p),
   dirname: (p) => path.dirname(p),
   extname: (p) => path.extname(p),
+  parse: (p) => path.parse(p),
   isAbsolute: (p) => path.isAbsolute(p),
   sep: path.sep,
   normalize: (p) => path.normalize(p),
