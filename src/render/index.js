@@ -510,14 +510,9 @@ async function saveFileChanges(state, newName, newContent = null, titleInput = n
   
   // 3. Обновляем только изменённый узел в дереве
   if (fileChanged) {
-    // Используем точечное обновление вместо полной перерисовки
-    const updated = await updateTreeNode(oldPath, newPath, newDisplayName);
+    await renderFileTree();
+    updateElementsState ('file', oldPath, newPath);
     console.log(oldPath, newPath, newDisplayName);
-    
-    if (!updated) {
-      // Если точечное обновление не удалось, делаем полную перерисовку
-      //await renderFileTree();
-    }
   }
   
   return { success: true };
