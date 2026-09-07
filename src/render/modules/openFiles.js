@@ -79,3 +79,8 @@ function highlightOpenFilesElement (openFilesContainer, element) {
 
   element.classList.add('active');
 }
+
+function clearOpenFilesContainer () {
+  openFilesContainer.replaceChildren();
+  openFiles.clear();
+}

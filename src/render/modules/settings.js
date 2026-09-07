@@ -83,6 +83,13 @@ pathChangeBtn.addEventListener('click', async () => {
     createNotify('Корневая папка изменена', 'success', 10000);
     fillSettingsValueFromStore(folderValueELement, 'folder');
     openFolders.clear();
+    clearOpenFilesContainer();
+    const currentFileViewer = document.querySelector('.file-viewer');
+
+    if (currentFileViewer) {
+      currentFileViewer.remove();
+    }
+
     await renderFileTree();
   } else {
     createNotify('Изменение корневой папки отменено', 'danger', 10000);
