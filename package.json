@@ -14,7 +14,7 @@
     "electron": "^42.2.0"
   },
   "dependencies": {
-    "electron-store": "^11.0.2",
-    "marked": "^18.0.11"
+    "easymde": "^2.21.0",
+    "electron-store": "^11.0.2"
   }
 }

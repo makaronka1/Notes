@@ -831,3 +831,6 @@ window.addEventListener('beforeunload', async () => {
   }
 });
 
+const editorContainer = document.querySelector('.main-place');
+console.log(editorContainer);
+const easyMDE = window.EasyMDE.create({element: document.getElementById('my-text-area')});

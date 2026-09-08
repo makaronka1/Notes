@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const path = require('path');
+const EasyMDE = require('easymde');
 
 
 contextBridge.exposeInMainWorld('electronStore', {
@@ -30,6 +31,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openExternal: (filePath) => ipcRenderer.invoke('open-external', filePath),
   createFile: (filePath, fileExtension) => ipcRenderer.invoke('create-file', filePath, fileExtension)
 
+});
+
+contextBridge.exposeInMainWorld('EasyMDE', {
+  create: (options) => new EasyMDE(options),
 });
 
 contextBridge.exposeInMainWorld('path', {
