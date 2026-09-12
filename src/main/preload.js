@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const path = require('path');
-const EasyMDE = require('easymde');
+const Quill = require('quill').default;
+const { marked } = require('marked');
+const TurndownService = require('turndown');
 
 
 contextBridge.exposeInMainWorld('electronStore', {
@@ -17,7 +19,8 @@ contextBridge.exposeInMainWorld('fileSystem', {
   readFileAsBase64: (filePath) => ipcRenderer.invoke('read-file-base64', filePath),
   saveFile: (filePath, content) => ipcRenderer.invoke('save-file-text', filePath, content),
   renameObject: (oldPath, newPath) => ipcRenderer.invoke('rename-object', oldPath, newPath),
-  deleteElement: (path) => ipcRenderer.invoke('delete-element', path)
+  deleteElement: (path) => ipcRenderer.invoke('delete-element', path),
+  saveImage: (arrayBuffer, fileName) => ipcRenderer.invoke('save-image', arrayBuffer, fileName)
 });
 
 contextBridge.exposeInMainWorld('yandexAPI', {
@@ -33,9 +36,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 });
 
-contextBridge.exposeInMainWorld('EasyMDE', {
-  create: (options) => new EasyMDE(options),
-});
 
 contextBridge.exposeInMainWorld('path', {
   join: (...args) => path.join(...args),
@@ -55,6 +55,17 @@ contextBridge.exposeInMainWorld('osInfo', {
   isWindows: process.platform === 'win32',
   isLinux: process.platform === 'linux',
   isMac: process.platform === 'darwin'
+});
+
+const turndownService = new TurndownService({
+  headingStyle: 'atx',
+  codeBlockStyle: 'fenced',
+  bulletListMarker: '-'
+});
+
+contextBridge.exposeInMainWorld('markdown', {
+  mdToHtml: (md) => marked.parse(md),
+  htmlToMd: (html) => turndownService.turndown(html)
 });
 
 console.log('✅ Preload script loaded successfully');

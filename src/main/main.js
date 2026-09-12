@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, protocol } = require('electron');
 const path = require('path');
 const fs = require('fs').promises;
 const fsSync = require('fs');
@@ -129,6 +129,52 @@ ipcMain.handle('save-file', async (event, filePath, fileData) => {
     return { success: true };
   } catch (error) {
     console.error('Ошибка сохранения файла:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('save-image', async (event, arrayBuffer, fileName) => {
+  try {
+    const rootFolder = store.get('folder');
+    
+    if (!rootFolder) {
+      return { 
+        success: false, 
+        error: 'Корневая папка не выбрана' 
+      };
+    }
+    
+    const imagesDir = path.join(rootFolder, 'images');
+    
+    await fs.mkdir(imagesDir, { recursive: true });
+    
+    const ext = path.extname(fileName);
+    const baseName = path.basename(fileName, ext);
+    let finalName = fileName;
+    let counter = 1;
+    let finalPath = path.join(imagesDir, finalName);
+    
+    while (fsSync.existsSync(finalPath)) {
+      finalName = `${baseName}_${counter}${ext}`;
+      finalPath = path.join(imagesDir, finalName);
+      counter++;
+    }
+    
+    await fs.writeFile(finalPath, Buffer.from(arrayBuffer));
+    
+    const relativePath = `images/${finalName}`;
+    
+    console.log(`✅ Изображение сохранено: ${relativePath}`);
+    
+    return {
+      success: true,
+      relativePath: relativePath,
+      absolutePath: finalPath,
+      fileName: finalName
+    };
+    
+  } catch (error) {
+    console.error('❌ Ошибка сохранения изображения:', error);
     return { success: false, error: error.message };
   }
 });
@@ -300,4 +346,68 @@ ipcMain.handle('delete-element', async (event, path) => {
   }
 });
 
-app.whenReady().then(createWindow);
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'note-file',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true,
+      bypassCSP: true,
+      stream: true
+    }
+  }
+]);
+
+
+app.whenReady().then(() => {
+  protocol.handle('note-file', async (request) => {
+    try {
+      const url = new URL(request.url);
+      let relativePath = decodeURIComponent(url.pathname);
+
+      if (relativePath.startsWith('/')) {
+        relativePath = relativePath.substring(1);
+      }
+      
+      const rootFolder = store.get('folder');
+      if (!rootFolder) {
+        return new Response('Root folder not set', { status: 404 });
+      }
+      
+      const absolutePath = path.join(rootFolder, relativePath);
+      
+      console.log('📂 Отдаём файл:', absolutePath);
+      
+      await fs.access(absolutePath);
+      
+      // Читаем файл
+      const data = await fs.readFile(absolutePath);
+      const ext = path.extname(absolutePath).toLowerCase();
+      
+      // Определяем MIME-тип
+      const mimeTypes = {
+        '.png': 'image/png',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.gif': 'image/gif',
+        '.webp': 'image/webp',
+        '.bmp': 'image/bmp',
+        '.svg': 'image/svg+xml',
+        '.ico': 'image/x-icon'
+      };
+      
+      const mimeType = mimeTypes[ext] || 'application/octet-stream';
+      
+      return new Response(data, {
+        headers: { 'Content-Type': mimeType }
+      });
+      
+    } catch (error) {
+      console.error('❌ Ошибка note-file протокола:', error);
+      return new Response('File not found', { status: 404 });
+    }
+  });
+  
+  createWindow();
+});
