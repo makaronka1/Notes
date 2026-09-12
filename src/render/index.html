@@ -9,7 +9,10 @@
   <link rel="stylesheet" href="styles/notify.css">
   <link rel="stylesheet" href="styles/settings.css">
   <link href="https://googleapis.com" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+  <link
+  href="styles/quill.css"
+  rel="stylesheet"
+/>
 </head>
 
 <body id="body">
@@ -41,7 +44,7 @@
         <div class="open-files-container"></div>
       </div>
       <div class="main-place">
-        <textarea id="my-text-area"></textarea>
+
       </div>
     </div>
 
@@ -76,6 +79,7 @@
       </div>
     </div>
   </div>
+  <script src="vendor/quill.js"></script>
   <script src="modules/electronStoreFunctions.js"></script>
   <script src="modules/yaDiskAPI.js"></script>
   <script src="modules/notify.js"></script>
@@ -83,6 +87,7 @@
   <script src="modules/navbar.js"></script>
   <script src="modules/settings.js"></script>
   <script src="modules/openFiles.js"></script>
+  <script src="modules/markdownEditor.js"></script>
   <script src="index.js"></script>
 </body>
 

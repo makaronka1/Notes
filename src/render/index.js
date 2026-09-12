@@ -318,6 +318,12 @@ async function openFileInMainPlace(filePath) {
   const fullFileName = absolutePath.split('\\').pop().split('/').pop();
   const fileNameWithoutExtension = getFileNameWithoutExtension(fullFileName);
   
+
+  if (fileExtension === 'md') {
+    await openMarkdownInQuill(absolutePath, fileNameWithoutExtension);
+    return;
+  }
+  
   // Создаём объект состояния
   const state = {
     currentFilePath: absolutePath,
@@ -831,6 +837,19 @@ window.addEventListener('beforeunload', async () => {
   }
 });
 
-const editorContainer = document.querySelector('.main-place');
-console.log(editorContainer);
-const easyMDE = window.EasyMDE.create({element: document.getElementById('my-text-area')});
+// const editorContainer = document.querySelector('.main-place');
+
+// const quill = window.Quill.create("#editor", {
+//   theme: "snow",
+//   modules: {
+//     toolbar: [
+//       [{ header: ['1', '2', '3', false] }],
+//       ['bold', 'italic', 'underline', 'link'],
+//       [{ list: 'ordered' }, { list: 'bullet' }],
+      
+//       [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
+      
+//       ['clean']
+//     ]
+//   }
+// });
