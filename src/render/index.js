@@ -853,3 +853,22 @@ window.addEventListener('beforeunload', async () => {
 //     ]
 //   }
 // });
+
+function mountVueComponent(component, selector, props = {}) {
+  const target = document.querySelector(selector);
+  if (!target || !window.Vue) return;
+
+  const { createVNode, render } = window.Vue;
+  
+  // Создаем VNode
+  const vnode = createVNode(component, props);
+  
+  // Рендерим в целевой элемент
+  render(vnode, target);
+  
+  console.log(`✅ Vue компонент смонтирован в ${selector}`);
+}
+
+// Пример использования: заменим какой-нибудь статичный блок
+// Допустим, у вас есть <div class="vue-counter-placeholder"></div>
+mountVueComponent(window.MyFirstComponent, '.vue-counter-placeholder', { initialCount: 5 });
